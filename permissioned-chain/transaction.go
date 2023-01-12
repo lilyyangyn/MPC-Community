@@ -23,7 +23,7 @@ const (
 	TxnTypeRegAssets TxnType = "txn-regAssets"
 
 	TxnTypeInitConfig TxnType = "txn-initConfig"
-	TxnTypeSetPubkey  TxnType = "txn-regEnckey"
+	TxnTypeRegEnckey  TxnType = "txn-regEnckey"
 )
 
 var txnHandlerStore = map[TxnType]func(storage.KVStore, *ChainConfig, *Transaction) error{
@@ -33,7 +33,7 @@ var txnHandlerStore = map[TxnType]func(storage.KVStore, *ChainConfig, *Transacti
 	TxnTypeRegAssets: execRegAssets,
 
 	TxnTypeInitConfig: execInitConfig,
-	TxnTypeSetPubkey:  execRegEnckey,
+	TxnTypeRegEnckey:  execRegEnckey,
 }
 
 var txnUnmarshalerStore = map[TxnType]func(json.RawMessage) (interface{}, error){
@@ -43,7 +43,7 @@ var txnUnmarshalerStore = map[TxnType]func(json.RawMessage) (interface{}, error)
 	TxnTypeRegAssets: unmarshalRegAssets,
 
 	TxnTypeInitConfig: unmarshalInitConfig,
-	TxnTypeSetPubkey:  unmarshalRegEnckey,
+	TxnTypeRegEnckey:  unmarshalRegEnckey,
 }
 
 // -----------------------------------------------------------------------------

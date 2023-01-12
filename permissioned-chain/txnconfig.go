@@ -19,13 +19,21 @@ var STATE_CONFIG_KEY = "PermissionedChain-Config"
 
 // ChainConfig represents the config of the permissioned chain
 type ChainConfig struct {
+	// chain's participants.
+	// Only the registered account can be involved in sending txn
+	// and mining block
 	Participants map[string]string
 
+	// maximal number of transactions per block
 	MaxTxnsPerBlk int
-	WaitTimeout   string
+	// maximal waiting time for the miner to wait for the next transaction
+	WaitTimeout string
 
+	// the basic gain for participating in a round of MPC (working fee)
 	MPCParticipationGain float64
 
+	// the percentage of total participants should endorse
+	// so that a new node can join the network
 	JoinThreshold float64
 }
 
@@ -153,7 +161,7 @@ func NewTransactionRegEnckey(peer *Account, pubkey string) *Transaction {
 	return NewTransaction(
 		peer,
 		&ZeroAddress,
-		TxnTypeSetPubkey,
+		TxnTypeRegEnckey,
 		0,
 		pubkey,
 	)
