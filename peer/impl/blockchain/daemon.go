@@ -39,7 +39,7 @@ out:
 			if m.CheckBlockHeight(newBlock) != permissioned.BlockCompareMatched {
 				log.Error().Msgf("mined block has an invalid block height %d", newBlock.Height)
 				// put the transactions back to the pool
-				m.txnPool.PushSeveral(newBlock.Transactions)
+				m.txnPool.PushBackSeveral(newBlock.Transactions)
 				continue out
 			}
 			log.Info().Msgf("Mined block %s on height=%d. Broadcasting...",
@@ -90,6 +90,11 @@ out:
 
 			err := signedTxn.Verify(worldState)
 			if err != nil {
+				// if too advance nonce, put txn back to txn pool
+				if err == permissioned.ErrNonceTooAdvace {
+					txnPool.Push(signedTxn)
+					continue
+				}
 				log.Warn().Msgf("%s", err)
 				continue
 			}
@@ -119,7 +124,6 @@ out:
 func (m *BlockchainModule) VerifyBlock(ctx context.Context) {
 	log.Info().Msgf("Start verifying")
 
-	m.blkChan = make(chan *permissioned.Block, 10)
 	for {
 		select {
 		case <-ctx.Done():

@@ -314,6 +314,8 @@ func GetConfigFromWorldState(worldState storage.KVStore) *ChainConfig {
 	return &config
 }
 
+var ErrNonceTooAdvace = fmt.Errorf("nonce too advance")
+
 func checkNonce(worldState storage.KVStore, txn *Transaction) error {
 	// Do nothing to zeroaddress
 	if txn.From == ZeroAddress.Hex {
@@ -321,6 +323,9 @@ func checkNonce(worldState storage.KVStore, txn *Transaction) error {
 	}
 
 	account := GetAccountFromWorldState(worldState, txn.From)
+	if account.nonce < txn.Nonce {
+		return ErrNonceTooAdvace
+	}
 	if account.nonce != txn.Nonce {
 		return fmt.Errorf("transaction %s has invalid nonce from %s. Expected: %d, Got: %d",
 			txn.ID, txn.From, account.nonce, txn.Nonce)

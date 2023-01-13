@@ -1,27 +1,21 @@
-package unit
+package integration
 
 import (
-	"crypto/rsa"
-	"crypto/x509"
-	"encoding/hex"
 	"fmt"
 	"testing"
 	"time"
 
-	"github.com/ethereum/go-ethereum/crypto"
 	"github.com/rs/zerolog"
 	"github.com/stretchr/testify/require"
-	z "go.dedis.ch/cs438/internal/testing"
+	"go.dedis.ch/cs438/peer/tests"
 	"go.dedis.ch/cs438/permissioned-chain"
-	"go.dedis.ch/cs438/transport/channel"
-	"go.dedis.ch/cs438/types"
 )
 
 // -----------------------------------------------------------------------------
 // Paxos MPC
 
 func Test_GP_MPC_Paxos_Add(t *testing.T) {
-	nodes := setup_n_peers(3, t)
+	nodes := tests.Setup_n_peers(3, t)
 	nodeA := nodes[0]
 	nodeB := nodes[1]
 	nodeC := nodes[2]
@@ -66,7 +60,7 @@ func Test_GP_MPC_Paxos_Add(t *testing.T) {
 
 func Test_GP_MPC_Pure_BC_Single(t *testing.T) {
 	zerolog.SetGlobalLevel(zerolog.WarnLevel)
-	nodes, addrs := setup_n_peers_bc(t, 3, 3, "2s", []float64{100}, true, true)
+	nodes, addrs := tests.Setup_n_peers_bc(t, 3, 3, "2s", []float64{100}, true, true)
 	nodeA := nodes[0]
 	nodeB := nodes[1]
 	nodeC := nodes[2]
@@ -147,7 +141,7 @@ func Test_GP_MPC_Pure_BC_Single(t *testing.T) {
 
 func Test_GP_MPC_Pure_BC_Multiple(t *testing.T) {
 	zerolog.SetGlobalLevel(zerolog.WarnLevel)
-	nodes, addrs := setup_n_peers_bc(t, 3, 3, "2h", []float64{100}, true, true)
+	nodes, addrs := tests.Setup_n_peers_bc(t, 3, 3, "2h", []float64{100}, true, true)
 	nodeA := nodes[0]
 	nodeB := nodes[1]
 	nodeC := nodes[2]
@@ -251,7 +245,7 @@ func Test_GP_MPC_Pure_BC_Multiple(t *testing.T) {
 
 func Test_GP_MPC_Pure_BC_Double_Spend(t *testing.T) {
 	zerolog.SetGlobalLevel(zerolog.WarnLevel)
-	nodes, addrs := setup_n_peers_bc(t, 3, 3, "2s", []float64{7}, true, true)
+	nodes, addrs := tests.Setup_n_peers_bc(t, 3, 3, "2s", []float64{7}, true, true)
 	nodeA := nodes[0]
 	nodeB := nodes[1]
 	nodeC := nodes[2]
@@ -335,7 +329,7 @@ func Test_GP_MPC_Pure_BC_Double_Spend(t *testing.T) {
 
 func Test_GP_MPC_BC_ADD_Simple(t *testing.T) {
 	zerolog.SetGlobalLevel(zerolog.WarnLevel)
-	nodes, _ := setup_n_peers_bc(t, 3, 1, "2s", []float64{100}, false, true)
+	nodes, _ := tests.Setup_n_peers_bc(t, 3, 1, "2s", []float64{100}, false, true)
 	nodeA := nodes[0]
 	nodeB := nodes[1]
 	nodeC := nodes[2]
@@ -382,7 +376,7 @@ func Test_GP_MPC_BC_ADD_Simple(t *testing.T) {
 
 func Test_GP_MPC_BC_MULT_Simple(t *testing.T) {
 	zerolog.SetGlobalLevel(zerolog.WarnLevel)
-	nodes, _ := setup_n_peers_bc(t, 3, 1, "2s", []float64{100}, false, true)
+	nodes, _ := tests.Setup_n_peers_bc(t, 3, 1, "2s", []float64{100}, false, true)
 	nodeA := nodes[0]
 	nodeB := nodes[1]
 	nodeC := nodes[2]
@@ -429,7 +423,7 @@ func Test_GP_MPC_BC_MULT_Simple(t *testing.T) {
 
 func Test_GP_MPC_BC_COMPLEX(t *testing.T) {
 	zerolog.SetGlobalLevel(zerolog.WarnLevel)
-	nodes, _ := setup_n_peers_bc(t, 3, 1, "2s", []float64{0, 0, 100}, false, true)
+	nodes, _ := tests.Setup_n_peers_bc(t, 3, 1, "2s", []float64{0, 0, 100}, false, true)
 	nodeA := nodes[0]
 	nodeB := nodes[1]
 	nodeC := nodes[2]
@@ -483,7 +477,7 @@ func Test_GP_MPC_BC_COMPLEX(t *testing.T) {
 
 func Test_GP_MPC_BC_Multiple(t *testing.T) {
 	zerolog.SetGlobalLevel(zerolog.InfoLevel)
-	nodes, addrs := setup_n_peers_bc(t, 3, 1, "5h", []float64{200}, false, true)
+	nodes, addrs := tests.Setup_n_peers_bc(t, 3, 1, "5h", []float64{200}, false, true)
 	nodeA := nodes[0]
 	nodeB := nodes[1]
 	nodeC := nodes[2]
@@ -581,7 +575,7 @@ func Test_GP_MPC_BC_Multiple(t *testing.T) {
 
 func Test_GP_MPC_BC_MULT_Simple_With_Pubkey_Txn(t *testing.T) {
 	zerolog.SetGlobalLevel(zerolog.WarnLevel)
-	nodes, _ := setup_n_peers_bc(t, 3, 1, "2s", []float64{100}, false, true)
+	nodes, _ := tests.Setup_n_peers_bc(t, 3, 1, "2s", []float64{100}, false, true)
 	nodeA := nodes[0]
 	nodeB := nodes[1]
 	nodeC := nodes[2]
@@ -626,7 +620,7 @@ func Test_GP_MPC_BC_MULT_Simple_With_Pubkey_Txn(t *testing.T) {
 }
 func Test_GP_MPC_BC_Stress_Multiple(t *testing.T) {
 	zerolog.SetGlobalLevel(zerolog.InfoLevel)
-	nodes, addrs := setup_n_peers_bc(t, 3, 3, "5s", []float64{200}, false, true)
+	nodes, addrs := tests.Setup_n_peers_bc(t, 3, 3, "5s", []float64{200}, false, true)
 	nodeA := nodes[0]
 	nodeB := nodes[1]
 	nodeC := nodes[2]
@@ -722,92 +716,3 @@ func Test_GP_MPC_BC_Stress_Multiple(t *testing.T) {
 
 // -----------------------------------------------------------------------------
 // Helper
-
-func setup_n_peers_bc(t *testing.T, n int, maxTxn int,
-	timeout string, gains []float64, disableMPC bool, disablePubkeyTxn bool) ([]*z.TestNode, []string) {
-	nodes := make([]*z.TestNode, n)
-
-	transp := channel.NewTransport()
-
-	opt := []z.Option{
-		z.WithMPCMaxWaitBlock(1),
-	}
-
-	if disableMPC {
-		opt = append(opt, z.WithDisableMPC())
-	}
-	if disablePubkeyTxn {
-		opt = append(opt, z.WithDisableAnnonceEnckey())
-	}
-	for i := 0; i < n; i++ {
-		node := z.NewTestNode(t, peerFac, transp, "127.0.0.1:0",
-			opt...)
-		nodes[i] = &node
-	}
-
-	// generate key pairs
-	addrs := make([]string, n)
-	for i := 0; i < n; i++ {
-		privkey1, err := crypto.GenerateKey()
-		require.NoError(t, err)
-		nodes[i].BCSetKeyPair(*privkey1)
-		addr, err := nodes[i].BCGetAddress()
-		require.NoError(t, err)
-		addrs[i] = addr.Hex
-		fmt.Printf("-----%s : %s--------\n", nodes[i].GetAddr(), addr)
-	}
-
-	// get encryption pubkeys
-	pubkeys := make([]types.Pubkey, n)
-	for i := 0; i < n; i++ {
-		pubkeys[i] = nodes[i].GetPubkeyStore()[nodes[i].GetAddr()]
-	}
-
-	// add peer
-	for i := 0; i < n; i++ {
-		for j := 0; j < n; j++ {
-			if i == j {
-				continue
-			}
-			nodes[i].AddPeer(nodes[j].GetAddr())
-			// nodes[i].SetPubkeyEntry(nodes[j].GetAddr(), &pubkeys[j])
-		}
-	}
-
-	// > init blockchain. Should success
-	// all should have the block
-	participants := make(map[string]string)
-	if disablePubkeyTxn {
-		for i, addr := range addrs {
-			pubBytes, err := x509.MarshalPKIXPublicKey((*rsa.PublicKey)(&pubkeys[i]))
-			require.NoError(t, err)
-			participants[addr] = hex.EncodeToString(pubBytes)
-		}
-	} else {
-		for _, addr := range addrs {
-			participants[addr] = ""
-		}
-	}
-
-	config := permissioned.NewChainConfig(
-		participants,
-		maxTxn, timeout, 1, 1,
-	)
-	initialGain := make(map[string]float64)
-	for i, gain := range gains {
-		initialGain[addrs[i]] = gain
-	}
-
-	err := nodes[0].InitBlockchain(*config, initialGain)
-	require.NoError(t, err)
-
-	time.Sleep(time.Millisecond * 500)
-
-	for _, node := range nodes {
-		block0 := node.BCGetLatestBlock()
-		require.NotNil(t, block0)
-		require.Equal(t, uint(0), block0.Height)
-	}
-
-	return nodes, addrs
-}

@@ -42,7 +42,7 @@ func NewBlockchainModule(conf *peer.Configuration, messageModule *message.Messag
 		txnPool:       NewTxnPool(),
 		watchRegistry: NewWatchRegistry(),
 		cr:            NewCreditRecords(),
-		blkChan:       make(chan *permissioned.Block, 5),
+		blkChan:       make(chan *permissioned.Block, 10),
 		readyCond:     *sync.NewCond(&sync.Mutex{}),
 		minerChan:     make(chan uint, 5),
 	}
