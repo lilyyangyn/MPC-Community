@@ -16,7 +16,9 @@ import (
 func Test_Benchmark_Throughput_Simple_Add_3_nodes(t *testing.T) {
 	zerolog.SetGlobalLevel(zerolog.ErrorLevel)
 	//zerolog.SetGlobalLevel(zerolog.WarnLevel)
-	nodes, addrs := tests.Setup_n_peers_bc(t, 3, 1, "2s", []float64{100}, false, true)
+
+	const iniBalanceA = 200
+	nodes, addrs := tests.Setup_n_peers_bc(t, 3, 1, "2s", []float64{float64(iniBalanceA)}, false, true)
 	nodeA := nodes[0]
 	nodeB := nodes[1]
 	nodeC := nodes[2]
@@ -28,51 +30,50 @@ func Test_Benchmark_Throughput_Simple_Add_3_nodes(t *testing.T) {
 
 	err := nodeA.SetValueDBAsset("a", 1, 1)
 	require.NoError(t, err)
-	err = nodeB.SetValueDBAsset("b", 1, 2)
+	err = nodeB.SetValueDBAsset("b", 1, 1)
 	require.NoError(t, err)
 
 	//timeTrack(start, "'set assets value'")
 
-	time.Sleep(time.Millisecond * 10)
+	time.Sleep(time.Millisecond * 100)
 
 	testNumber := 50
 	mpcDone := make(chan struct{})
 	go func() {
 		// stress test: compute MPC continuously for 50 times
-		overall := time.Duration(0)
+		overall := time.Now()
 		for i := 1; i <= testNumber; i++ {
 			fmt.Printf("the %v iteration\n", i)
 
 			start := time.Now()
 
-			_, err = nodeA.Calculate("a+b", 10)
+			_, err = nodeA.Calculate("a+b", 5)
 			require.NoError(t, err)
 
-			timeTrack(start, "'this round'")
-
 			// try to minimize
-			time.Sleep(time.Millisecond * 50)
+			time.Sleep(time.Millisecond * 10)
 			//time.Sleep(time.Second * 3)
-			overall = computeTime(start, overall)
+
+			timeTrack(start, "MPC")
 
 			// verify balance
-			start = time.Now()
+			//start = time.Now()
 
 			block2a := nodeA.BCGetLatestBlock()
 			require.NotNil(t, block2a)
 			worldstate := block2a.GetWorldStateCopy()
 			accountA := permissioned.GetAccountFromWorldState(worldstate, addrs[0])
-			require.Equal(t, float64(100-i*4), accountA.GetBalance())
+			require.Equal(t, float64(iniBalanceA-i*3), accountA.GetBalance())
 			accountB := permissioned.GetAccountFromWorldState(worldstate, addrs[1])
-			require.Equal(t, float64(i*3), accountB.GetBalance())
+			require.Equal(t, float64(i*2), accountB.GetBalance())
 			accountC := permissioned.GetAccountFromWorldState(worldstate, addrs[2])
 			require.Equal(t, float64(i), accountC.GetBalance())
-			timeTrack(start, "'verification'")
+			//timeTrack(start, "'verification'")
 
 			fmt.Println()
 		}
-		//timeTrack(overallStart, "'overall execution'")
-		fmt.Printf("overall execution time: %s", overall)
+		timeTrack(overall, "overall execution")
+		//fmt.Printf("overall execution time: %s", overall)
 
 		close(mpcDone)
 	}()
@@ -82,7 +83,86 @@ func Test_Benchmark_Throughput_Simple_Add_3_nodes(t *testing.T) {
 	select {
 	case <-mpcDone:
 	case <-timeout:
-		t.Error(t, "timeout error: cannot finish MPC in given time")
+		t.Error(t, "timeout error: cannot finish test in given time")
+	}
+}
+
+func Test_Benchmark_Throughput_Simple_Add_4_nodes(t *testing.T) {
+	//zerolog.SetGlobalLevel(zerolog.ErrorLevel)
+	zerolog.SetGlobalLevel(zerolog.WarnLevel)
+
+	const iniBalanceA = 100
+	nodes, addrs := tests.Setup_n_peers_bc(t, 4, 1, "2s", []float64{float64(iniBalanceA)}, false, true)
+	nodeA := nodes[0]
+	nodeB := nodes[1]
+	nodeC := nodes[2]
+	nodeD := nodes[3]
+	defer nodeA.Stop()
+	defer nodeB.Stop()
+	defer nodeC.Stop()
+	defer nodeD.Stop()
+
+	//start := time.Now()
+
+	err := nodeA.SetValueDBAsset("a", 1, 1)
+	require.NoError(t, err)
+	err = nodeB.SetValueDBAsset("b", 1, 1)
+	require.NoError(t, err)
+
+	//timeTrack(start, "'set assets value'")
+
+	time.Sleep(time.Millisecond * 100)
+
+	testNumber := 10
+	mpcDone := make(chan struct{})
+	go func() {
+		// stress test: compute MPC continuously for 50 times
+		overall := time.Now()
+		for i := 1; i <= testNumber; i++ {
+			fmt.Printf("the %v iteration\n", i)
+
+			start := time.Now()
+
+			_, err = nodeA.Calculate("a+b", 6)
+			require.NoError(t, err)
+
+			// try to minimize
+			time.Sleep(time.Millisecond * 100)
+			//time.Sleep(time.Second * 3)
+
+			timeTrack(start, "MPC")
+
+			// verify balance
+			//start = time.Now()
+
+			block2a := nodeA.BCGetLatestBlock()
+			require.NotNil(t, block2a)
+
+			worldstate := block2a.GetWorldStateCopy()
+			accountA := permissioned.GetAccountFromWorldState(worldstate, addrs[0])
+			require.Equal(t, float64(iniBalanceA-i*4), accountA.GetBalance())
+			accountB := permissioned.GetAccountFromWorldState(worldstate, addrs[1])
+			require.Equal(t, float64(i*2), accountB.GetBalance())
+			accountC := permissioned.GetAccountFromWorldState(worldstate, addrs[2])
+			require.Equal(t, float64(i), accountC.GetBalance())
+			accountD := permissioned.GetAccountFromWorldState(worldstate, addrs[3])
+			require.Equal(t, float64(i), accountD.GetBalance())
+			//timeTrack(start, "'verification'")
+
+			fmt.Println()
+		}
+		timeTrack(overall, "overall execution")
+		//fmt.Printf("overall execution time: %s", overall)
+
+		close(mpcDone)
+	}()
+
+	timeout := time.After(time.Second * 40)
+
+	select {
+	case <-mpcDone:
+	case <-timeout:
+		t.Error(t, "timeout error: cannot finish test in given time")
 	}
 }
 
