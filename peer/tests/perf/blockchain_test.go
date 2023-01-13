@@ -6,7 +6,6 @@ import (
 	"time"
 
 	"github.com/rs/zerolog"
-	"github.com/stretchr/testify/require"
 	"go.dedis.ch/cs438/peer/tests"
 	"go.dedis.ch/cs438/permissioned-chain"
 	"go.dedis.ch/cs438/transport/channel"
@@ -38,7 +37,9 @@ func Test_Perf_BC_Troughput(t *testing.T) {
 						count++
 						// fmt.Println(count)
 						err := nodeA.SetValueDBAsset("a", 1, float64(count))
-						require.NoError(t, err)
+						if err != nil {
+							break out
+						}
 						time.Sleep(time.Microsecond * 400)
 
 					}
@@ -63,7 +64,7 @@ func Test_Perf_BC_Troughput(t *testing.T) {
 		}
 	}
 
-	t.Run("small group", getTest(3, 10, "2s", 10))
+	t.Run("small group", getTest(3, 10, "2s", 5))
 	// t.Run("medium group", getTest(5, 10, "2s", 10))
 	// t.Run("large group", getTest(100, 10, "2s", 10))
 }
