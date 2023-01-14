@@ -172,7 +172,7 @@ func (m *PaxosInstance) broadcastPaxosPrepareMessage(step uint, id uint) error {
 	if err != nil {
 		return err
 	}
-	err = m.Broadcast(marshalPrepare)
+	err = m.BroadcastWithGo(marshalPrepare)
 
 	return err
 }
@@ -199,7 +199,7 @@ func (m *PaxosInstance) broadcastPaxosPromiseMessage(recipient string, step uint
 	if err != nil {
 		return err
 	}
-	err = m.Broadcast(marshalPrivate)
+	err = m.BroadcastWithGo(marshalPrivate)
 
 	return err
 }
@@ -216,7 +216,7 @@ func (m *PaxosInstance) broadcastPaxosProposeMessage(step uint, id uint, value *
 	if err != nil {
 		return err
 	}
-	err = m.Broadcast(marshalPropose)
+	err = m.BroadcastWithGo(marshalPropose)
 
 	return err
 }
@@ -233,7 +233,7 @@ func (m *PaxosInstance) broadcastPaxosAcceptMessage(step uint, id uint, value *t
 	if err != nil {
 		return err
 	}
-	err = m.Broadcast(marshalAccept)
+	err = m.BroadcastWithGo(marshalAccept)
 
 	return err
 }
@@ -249,7 +249,7 @@ func (m *PaxosInstance) broadcastTLCMessage(step uint, block *types.BlockchainBl
 	if err != nil {
 		return err
 	}
-	err = m.Broadcast(marshalTLC)
+	err = m.BroadcastWithGo(marshalTLC)
 
 	return err
 }

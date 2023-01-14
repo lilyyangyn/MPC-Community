@@ -46,6 +46,29 @@ func (m *GossipModule) Broadcast(msg transport.Message) error {
 		return err
 	}
 
+	// process the message locally
+	header := transport.NewHeader(
+		m.conf.Socket.GetAddress(),
+		m.conf.Socket.GetAddress(),
+		m.conf.Socket.GetAddress(),
+		0)
+	pkt := transport.Packet{Header: &header, Msg: &msg}
+	err = m.conf.MessageRegistry.ProcessPacket(pkt)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (m *GossipModule) BroadcastWithGo(msg transport.Message) error {
+	// sendout the message in rumor
+	rumor := m.createRumor(&msg)
+	err := m.sendRumorsMessage("", &[]types.Rumor{rumor})
+	if err != nil {
+		return err
+	}
+
 	go func() {
 		// process the message locally
 		header := transport.NewHeader(
@@ -54,10 +77,9 @@ func (m *GossipModule) Broadcast(msg transport.Message) error {
 			m.conf.Socket.GetAddress(),
 			0)
 		pkt := transport.Packet{Header: &header, Msg: &msg}
-		err := m.conf.MessageRegistry.ProcessPacket(pkt)
+		err = m.conf.MessageRegistry.ProcessPacket(pkt)
 		if err != nil {
 			return
-			// return err
 		}
 	}()
 

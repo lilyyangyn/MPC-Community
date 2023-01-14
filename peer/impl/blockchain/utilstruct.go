@@ -3,6 +3,7 @@ package blockchain
 import (
 	"context"
 	"crypto/ecdsa"
+	"sort"
 	"sync"
 
 	permissioned "go.dedis.ch/cs438/permissioned-chain"
@@ -50,23 +51,38 @@ func (p *TxnPool) Daemon(ctx context.Context) {
 	}
 }
 
+func (p *TxnPool) sortedInsert(txn *permissioned.SignedTransaction) {
+	i := sort.Search(len(p.queue), func(i int) bool {
+		return p.queue[i].Txn.Nonce > txn.Txn.Nonce
+	})
+	if i == len(p.queue) {
+		// Insert at end is the easy case.
+		p.queue = append(p.queue, txn)
+	} else {
+		// Make space for the inserted element by shifting values
+		p.queue = append(p.queue[:i+1], p.queue[i:]...)
+		// Insert the new element.
+		p.queue[i] = txn
+	}
+}
+
 func (p *TxnPool) Push(txn *permissioned.SignedTransaction) {
 	p.Lock()
 	defer p.Unlock()
 
-	p.queue = append(p.queue, txn)
+	p.sortedInsert(txn)
 
 	if len(p.newTxnChannel) == 0 {
 		p.newTxnChannel <- struct{}{}
 	}
 }
 
-func (p *TxnPool) PushSeveral(txns []permissioned.SignedTransaction) {
+func (p *TxnPool) PushBackSeveral(txns []permissioned.SignedTransaction) {
 	p.Lock()
 	defer p.Unlock()
 
 	for _, txn := range txns {
-		p.queue = append(p.queue, &txn)
+		p.sortedInsert(&txn)
 	}
 
 	if len(p.newTxnChannel) == 0 {
@@ -232,11 +248,41 @@ func (w *Wallet) PostMPCTxn(id string, result float64) (*permissioned.SignedTran
 	w.Lock()
 	defer w.Unlock()
 
+	ResultHash := storage.Hash(result)
+
 	record := permissioned.MPCRecord{
 		UniqID: id,
-		Result: result,
+		Result: ResultHash,
 	}
 	txn := permissioned.NewTransactionPostMPC(w.account, record)
+	signedTxn, err := txn.Sign(w.privKey)
+	if err != nil {
+		return nil, err
+	}
+	w.account.IncreaseNonce()
+
+	return signedTxn, err
+}
+
+func (w *Wallet) RegAssets(assets map[string]float64) (*permissioned.SignedTransaction, error) {
+	w.Lock()
+	defer w.Unlock()
+
+	txn := permissioned.NewTransactionRegAssets(w.account, assets)
+	signedTxn, err := txn.Sign(w.privKey)
+	if err != nil {
+		return nil, err
+	}
+	w.account.IncreaseNonce()
+
+	return signedTxn, err
+}
+
+func (w *Wallet) RegEnckeyTxn(pubkey string) (*permissioned.SignedTransaction, error) {
+	w.Lock()
+	defer w.Unlock()
+
+	txn := permissioned.NewTransactionRegEnckey(w.account, pubkey)
 	signedTxn, err := txn.Sign(w.privKey)
 	if err != nil {
 		return nil, err
