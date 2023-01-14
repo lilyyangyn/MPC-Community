@@ -88,11 +88,11 @@ func Test_Benchmark_Throughput_Simple_Add_3_nodes(t *testing.T) {
 }
 
 func Test_Benchmark_Throughput_Simple_Add_4_nodes(t *testing.T) {
-	//zerolog.SetGlobalLevel(zerolog.ErrorLevel)
-	zerolog.SetGlobalLevel(zerolog.WarnLevel)
+	zerolog.SetGlobalLevel(zerolog.ErrorLevel)
+	//zerolog.SetGlobalLevel(zerolog.WarnLevel)
 
 	const iniBalanceA = 100
-	nodes, addrs := tests.Setup_n_peers_bc(t, 4, 1, "2s", []float64{float64(iniBalanceA)}, false, true)
+	nodes, addrs := tests.Setup_n_peers_bc(t, 4, 1, "5s", []float64{float64(iniBalanceA)}, false, true)
 	nodeA := nodes[0]
 	nodeB := nodes[1]
 	nodeC := nodes[2]
@@ -127,8 +127,8 @@ func Test_Benchmark_Throughput_Simple_Add_4_nodes(t *testing.T) {
 			require.NoError(t, err)
 
 			// try to minimize
-			time.Sleep(time.Millisecond * 100)
-			//time.Sleep(time.Second * 3)
+			//time.Sleep(time.Millisecond * 1000)
+			time.Sleep(time.Second * 2)
 
 			timeTrack(start, "MPC")
 

@@ -113,7 +113,7 @@ func (m *MPCModule) GetPeerAssetPrices() map[string]map[string]float64 {
 }
 
 func (m *MPCModule) ComputeExpression(uniqID string, expr string, prime string) (int, error) {
-	fmt.Printf("#################### %s Start Expression %s(%s) #############################\n", m.conf.Socket.GetAddress(), expr, uniqID)
+	//fmt.Printf("#################### %s Start Expression %s(%s) #############################\n", m.conf.Socket.GetAddress(), expr, uniqID)
 
 	postfix, variablesNeed, err := permissioned.GetPostfixAndVariables(expr)
 	if err != nil {
@@ -149,7 +149,7 @@ func (m *MPCModule) ComputeExpression(uniqID string, expr string, prime string) 
 		return -1, fmt.Errorf("%s: compute result error, expression: %s, %s", m.conf.Socket.GetAddress(), mpc.expression, err)
 	}
 
-	fmt.Printf("#################### %s End Expression: %s, uniqID: %s, ans: %d) #############################\n", m.conf.Socket.GetAddress(), expr, uniqID, ans.Int64())
+	//fmt.Printf("#################### %s End Expression: %s, uniqID: %s, ans: %d) #############################\n", m.conf.Socket.GetAddress(), expr, uniqID, ans.Int64())
 	return int(ans.Int64()), nil
 }
 
