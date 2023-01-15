@@ -60,6 +60,7 @@ func newMPCModule(conf *peer.Configuration, messageModule *message.MessageModule
 /** Feature Functions **/
 
 func (m *MPCModule) Calculate(expression string, budget float64) (int, error) {
+	// fmt.Printf("BENCHMARK, Time: %d. In function: Calculate Start\n", time.Now().UnixNano())
 	switch m.consensusType {
 	case peer.MPCConsensusPaxos:
 		return m.CalculatePaxos(expression, budget)
@@ -113,7 +114,7 @@ func (m *MPCModule) GetPeerAssetPrices() map[string]map[string]float64 {
 }
 
 func (m *MPCModule) ComputeExpression(uniqID string, expr string, prime string) (int, error) {
-	//fmt.Printf("#################### %s Start Expression %s(%s) #############################\n", m.conf.Socket.GetAddress(), expr, uniqID)
+	// fmt.Printf("BENCHMARK, Time: %d. In function: ComputeExpression start.\n", time.Now().UnixNano())
 
 	postfix, variablesNeed, err := permissioned.GetPostfixAndVariables(expr)
 	if err != nil {
@@ -149,7 +150,7 @@ func (m *MPCModule) ComputeExpression(uniqID string, expr string, prime string) 
 		return -1, fmt.Errorf("%s: compute result error, expression: %s, %s", m.conf.Socket.GetAddress(), mpc.expression, err)
 	}
 
-	//fmt.Printf("#################### %s End Expression: %s, uniqID: %s, ans: %d) #############################\n", m.conf.Socket.GetAddress(), expr, uniqID, ans.Int64())
+	// fmt.Printf("BENCHMARK, Time: %d. In function: ComputeExpression end.\n", time.Now().UnixNano())
 	return int(ans.Int64()), nil
 }
 
@@ -159,6 +160,7 @@ func (m *MPCModule) ComputeExpression(uniqID string, expr string, prime string) 
 func (m *MPCModule) shareSecret(key string, mpc *MPC) error {
 	// log.Printf("%s: start share secret, key: %s, peers: %s",
 	// 	m.conf.Socket.GetAddress(), key, peers)
+	// fmt.Printf("BENCHMARK, Time: %d. In function: shareSecret start\n", time.Now().UnixNano())
 
 	value, ok := mpc.getValue(key)
 	if !ok {
@@ -189,7 +191,7 @@ func (m *MPCModule) shareSecret(key string, mpc *MPC) error {
 			return err
 		}
 	}
-
+	// fmt.Printf("BENCHMARK, Time: %d. In function: shareSecret end\n", time.Now().UnixNano())
 	return nil
 }
 
@@ -204,11 +206,15 @@ func (m *MPCModule) computeResult(postfix []string, mpc *MPC) (big.Int, error) {
 			var res big.Int
 			var err error
 			if ch == "+" {
+				// fmt.Printf("BENCHMARK, Time: %d. In function: computeResult add start\n", time.Now().UnixNano())
 				res = addZp(&num1, &num2, &mpc.prime)
+				// fmt.Printf("BENCHMARK, Time: %d. In function: computeResult add end\n", time.Now().UnixNano())
 			} else if ch == "-" {
 				res = subZp(&num1, &num2, &mpc.prime)
 			} else if ch == "*" {
+				// fmt.Printf("BENCHMARK, Time: %d. In function: computeResult Mult start\n", time.Now().UnixNano())
 				res, err = m.computeMult(num1, num2, i, mpc)
+				// fmt.Printf("BENCHMARK, Time: %d. In function: computeReuslt Mult end\n", time.Now().UnixNano())
 			} else if ch == "/" {
 				// only support for constant
 				res = divZp(&num1, &num2, &mpc.prime)

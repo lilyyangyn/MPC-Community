@@ -35,6 +35,7 @@ func (m *MPCModule) shamirSecretShareHalfDegreeZp(secret, prime big.Int, xcoord 
 func lagrangeInterpolationZpTest(ycoord []big.Int, xcoord []big.Int, p *big.Int) big.Int {
 	// length of two input arrays must be identical
 	// equal to number of nodes
+	// fmt.Printf("BENCHMARK, Time: %d. In function: lagrangeInterpolitionZp start\n", time.Now().UnixNano())
 
 	result := big.NewInt(0)
 	for i, y := range ycoord {
@@ -55,6 +56,7 @@ func lagrangeInterpolationZpTest(ycoord []big.Int, xcoord []big.Int, p *big.Int)
 
 		//floatResult = floatResult + w*float64(y)
 	}
+	// fmt.Printf("BENCHMARK, Time: %d. In function: lagrangeInterpolitionZp end\n", time.Now().UnixNano())
 	return *result
 }
 
@@ -87,6 +89,7 @@ func shamirSecretShareZpTest(secret, prime big.Int, xcoord []big.Int) (results [
 // SSS in Zp of half degree (for test): degree is smaller than half of the participant number
 func shamirSecretShareHalfDegreeZpTest(secret, prime big.Int, xcoord []big.Int) (results []big.Int, err error) {
 	// no redundancy. assume participants will not down during MPC
+	// fmt.Printf("BENCHMARK, Time: %d. In function: SSSHalfDegree start\n", time.Now().UnixNano())
 	num := len(xcoord)
 	degree := (num+1)/2 - 1
 
@@ -107,6 +110,6 @@ func shamirSecretShareHalfDegreeZpTest(secret, prime big.Int, xcoord []big.Int) 
 		results[idx] = poly.computePolynomialZp(&id, &prime)
 		// results = append(results, poly.computePolynomialZp(&id, &prime))
 	}
-
+	// fmt.Printf("BENCHMARK, Time: %d. In function: SSSHalfDegree end\n", time.Now().UnixNano())
 	return results, nil
 }

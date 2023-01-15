@@ -130,6 +130,7 @@ func GetAllAssetsFromWorldState(worldState storage.KVStore) map[string]map[strin
 
 func GetPostfixAndVariables(expr string) ([]string, map[string]struct{}, error) {
 	// change infix to postfix
+	// fmt.Printf("BENCHMARK, Time: %d. In function: GetPostfixAndVariables\n", time.Now().UnixNano())
 	postfix, err := infixToPostfix(expr)
 	if err != nil {
 		return []string{}, map[string]struct{}{}, err
