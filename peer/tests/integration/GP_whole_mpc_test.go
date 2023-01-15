@@ -59,7 +59,7 @@ func Test_GP_MPC_Paxos_Add(t *testing.T) {
 // Blockchain MPC
 
 func Test_GP_MPC_Pure_BC_Single(t *testing.T) {
-	zerolog.SetGlobalLevel(zerolog.WarnLevel)
+	// zerolog.SetGlobalLevel(zerolog.WarnLevel)
 	nodes, addrs := tests.Setup_n_peers_bc(t, 3, 3, "2s", []float64{100}, true, true)
 	nodeA := nodes[0]
 	nodeB := nodes[1]

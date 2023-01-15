@@ -11,6 +11,75 @@ import (
 )
 
 // -----------------------------------------------------------------------------
+// Next Block Info
+type NextBlkInfo struct {
+	Height uint
+	Miner  bool
+}
+
+// -----------------------------------------------------------------------------
+// BlkPool
+
+type BlkPool struct {
+	*sync.Mutex
+	*sync.Cond
+	queue []*permissioned.Block
+}
+
+func NewBlkPool() *BlkPool {
+	lock := sync.Mutex{}
+	return &BlkPool{
+		Mutex: &lock,
+		Cond:  sync.NewCond(&lock),
+		queue: make([]*permissioned.Block, 0),
+	}
+}
+
+func (p *BlkPool) sortedInsert(block *permissioned.Block) {
+	i := sort.Search(len(p.queue), func(i int) bool {
+		return p.queue[i].Height > block.Height
+	})
+	if i == len(p.queue) {
+		// Insert at end is the easy case.
+		p.queue = append(p.queue, block)
+	} else {
+		// Make space for the inserted element by shifting values
+		p.queue = append(p.queue[:i+1], p.queue[i:]...)
+		// Insert the new element.
+		p.queue[i] = block
+	}
+}
+
+func (p *BlkPool) Add(block *permissioned.Block) {
+	p.Lock()
+	defer p.Unlock()
+
+	p.sortedInsert(block)
+	p.Broadcast()
+}
+
+func (p *BlkPool) Get(ctx context.Context) *permissioned.Block {
+	p.Lock()
+	defer p.Unlock()
+
+	for {
+		select {
+		case <-ctx.Done():
+			return nil
+		default:
+		}
+		if len(p.queue) > 0 {
+			break
+		}
+		p.Wait()
+	}
+
+	block := p.queue[0]
+	p.queue = p.queue[1:]
+	return block
+}
+
+// -----------------------------------------------------------------------------
 // TxnPool
 
 const POOL_CHAN_BUFFER_SIZE = 10
@@ -206,6 +275,9 @@ func NewWallet(privkey *ecdsa.PrivateKey) *Wallet {
 
 func (w *Wallet) GetAddress() permissioned.Address {
 	// Assume addr never change
+	if w.addr == nil {
+		panic("blockchain address not set")
+	}
 	return *w.addr
 }
 

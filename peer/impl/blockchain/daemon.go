@@ -20,19 +20,28 @@ out:
 		select {
 		case <-ctx.Done():
 			return
-		case prevHeight := <-m.minerChan:
+		case info := <-m.minerChan:
 			latestBlock := m.GetLatestBlock()
-			if prevHeight != latestBlock.Height {
-				log.Error().Msgf("miner mining on incoorect height. Expected: %d. Got: %d",
-					prevHeight, latestBlock.Height)
+			if latestBlock == nil {
 				continue
 			}
+			if info.Height != latestBlock.Height {
+				// 	// log.Error().Msgf("miner mining on incoorect height. Expected: %d. Got: %d",
+				// 	// 	prevHeight, latestBlock.Height)
+				continue out
+			}
+			prevHeight := latestBlock.Height
 
 			log.Info().Msgf("Mining on height=%d...", prevHeight+1)
 			newBlock := createBlock(ctx, txnPool,
 				m.wallet.GetAddress().Hex, latestBlock)
 			if newBlock == nil {
-				continue
+				continue out
+			}
+			if !info.Miner {
+				// put the transactions back to the pool
+				m.txnPool.PushBackSeveral(newBlock.Transactions)
+				continue out
 			}
 
 			// validate block
@@ -128,31 +137,37 @@ func (m *BlockchainModule) VerifyBlock(ctx context.Context) {
 		select {
 		case <-ctx.Done():
 			return
-		case block := <-m.blkChan:
-			log.Info().Msgf("Verifying block %s on height=%d...",
-				block.Hash(), block.Height)
-
-			// validate consensus
-			expectedMiner := m.cr.getLatestMiner()
-			if expectedMiner != block.Miner {
-				log.Error().Msgf("invalid miner. Expected: %s. Got: %s",
-					expectedMiner, block.Miner)
+		default:
+			// block := <-m.blkChan:
+			block := m.blkPool.Get(ctx)
+			if block == nil {
 				continue
 			}
+			log.Info().Msgf("Verifying block %s on height=%d...",
+				block.Hash(), block.Height)
 
 			result := m.CheckBlockHeight(block)
 			if result == permissioned.BlockCompareAdvance ||
 				result == permissioned.BlockCompareNotInitialize {
 				// block too advance. Syncing
 				log.Info().Msgf("receive advance block on height %d. Syncing...", block.Height)
-				err := m.sync(block.Miner)
-				if err != nil {
-					log.Err(err).Send()
-				}
+				// err := m.sync(block.Miner)
+				// if err != nil {
+				// 	log.Err(err).Send()
+				// }
+				m.blkPool.Add(block)
 				continue
 			} else if result != permissioned.BlockCompareMatched {
 				log.Error().Msgf("block %s is invalid. Error code: %d",
 					block.Hash(), result)
+				continue
+			}
+
+			// validate consensus
+			expectedMiner := m.cr.getLatestMiner()
+			if expectedMiner != block.Miner {
+				log.Error().Msgf("invalid miner. Expected: %s. Got: %s",
+					expectedMiner, block.Miner)
 				continue
 			}
 

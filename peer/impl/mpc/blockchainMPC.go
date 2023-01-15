@@ -105,7 +105,7 @@ func (m *MPCModule) sendShareMessageBlockchain(uniqID string, peer string, id in
 	shareMsg := types.MPCShareMessage{
 		ReqID: uniqID,
 		Value: types.MPCSecretValue{
-			Owner: m.conf.Socket.GetAddress(),
+			Owner: m.getIdentifyKey(),
 			Key:   key,
 			Value: value.Text(10),
 		},

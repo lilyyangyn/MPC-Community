@@ -14,7 +14,7 @@ import (
 )
 
 const ReadTimeout = time.Millisecond * 100
-const WriteTimeout = time.Millisecond * 100
+const WriteTimeout = time.Millisecond * 1000
 
 type MessageModule struct {
 	conf *peer.Configuration
