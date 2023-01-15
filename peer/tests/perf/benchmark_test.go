@@ -127,8 +127,8 @@ func Test_Benchmark_Throughput_Simple_Add_4_nodes(t *testing.T) {
 			require.NoError(t, err)
 
 			// try to minimize
-			//time.Sleep(time.Millisecond * 1000)
-			time.Sleep(time.Second * 2)
+			time.Sleep(time.Millisecond * 250)
+			// time.Sleep(time.Second * 2)
 
 			timeTrack(start, "MPC")
 

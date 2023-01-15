@@ -7,7 +7,9 @@ import (
 
 	"github.com/rs/zerolog"
 	"github.com/stretchr/testify/require"
+	z "go.dedis.ch/cs438/internal/testing"
 	"go.dedis.ch/cs438/peer/tests"
+	"go.dedis.ch/cs438/transport/channel"
 )
 
 // --------------------------------- benchmark --------------------------------------
@@ -17,13 +19,18 @@ import (
 // test the impact of total node number on throughput
 // ##################################################
 
+func setup(t *testing.T, n int, maxTxn int,
+	timeout string, gains []float64, initSleepTime time.Duration) ([]*z.TestNode, []string) {
+	return tests.Setup_n_peers_bc_perf(t, channel.NewTransport(), n, maxTxn, timeout, []float64{10000}, initSleepTime, false, true)
+}
+
 // addition tests
 func Test_Throughput_Simple_Add_3_nodes(t *testing.T) {
 	zerolog.SetGlobalLevel(zerolog.ErrorLevel)
 	//zerolog.SetGlobalLevel(zerolog.WarnLevel)
 
 	const iniBalanceA = 300
-	nodes, _ := tests.Setup_n_peers_bc(t, 3, 1, "2s", []float64{float64(iniBalanceA)}, false, true)
+	nodes, _ := setup(t, 3, 1, "2s", []float64{float64(iniBalanceA)}, time.Millisecond*500)
 	nodeA, nodeB, nodeC := nodes[0], nodes[1], nodes[2]
 	defer nodeA.Stop()
 	defer nodeB.Stop()
@@ -80,7 +87,7 @@ func Test_Throughput_Simple_Add_4_nodes(t *testing.T) {
 	//zerolog.SetGlobalLevel(zerolog.WarnLevel)
 
 	const iniBalanceA = 300
-	nodes, _ := tests.Setup_n_peers_bc(t, 4, 1, "2s", []float64{float64(iniBalanceA)}, false, true)
+	nodes, _ := setup(t, 4, 1, "2s", []float64{float64(iniBalanceA)}, time.Second)
 	nodeA, nodeB, nodeC, nodeD := nodes[0], nodes[1], nodes[2], nodes[3]
 	defer nodeA.Stop()
 	defer nodeB.Stop()
@@ -136,7 +143,7 @@ func Test_Throughput_Simple_Add_5_nodes(t *testing.T) {
 	//zerolog.SetGlobalLevel(zerolog.WarnLevel)
 
 	const iniBalanceA = 300
-	nodes, _ := tests.Setup_n_peers_bc(t, 5, 1, "10s", []float64{float64(iniBalanceA)}, false, true)
+	nodes, _ := setup(t, 5, 1, "10s", []float64{float64(iniBalanceA)}, time.Second*3)
 	nodeA, nodeB, nodeC, nodeD, nodeE := nodes[0], nodes[1], nodes[2], nodes[3], nodes[4]
 	defer nodeA.Stop()
 	defer nodeB.Stop()
@@ -194,7 +201,7 @@ func Test_Throughput_Simple_Mul_3_nodes(t *testing.T) {
 	//zerolog.SetGlobalLevel(zerolog.WarnLevel)
 
 	const iniBalanceA = 300
-	nodes, _ := tests.Setup_n_peers_bc(t, 3, 1, "2s", []float64{float64(iniBalanceA)}, false, true)
+	nodes, _ := setup(t, 3, 1, "2s", []float64{float64(iniBalanceA)}, time.Millisecond*200)
 	nodeA, nodeB, nodeC := nodes[0], nodes[1], nodes[2]
 	defer nodeA.Stop()
 	defer nodeB.Stop()
@@ -251,7 +258,7 @@ func Test_Throughput_Simple_Mul_4_nodes(t *testing.T) {
 	//zerolog.SetGlobalLevel(zerolog.WarnLevel)
 
 	const iniBalanceA = 300
-	nodes, _ := tests.Setup_n_peers_bc(t, 4, 1, "2s", []float64{float64(iniBalanceA)}, false, true)
+	nodes, _ := setup(t, 4, 1, "2s", []float64{float64(iniBalanceA)}, time.Second)
 	nodeA, nodeB, nodeC, nodeD := nodes[0], nodes[1], nodes[2], nodes[3]
 	defer nodeA.Stop()
 	defer nodeB.Stop()
@@ -309,7 +316,7 @@ func Test_Throughput_Simple_Mul_5_nodes(t *testing.T) {
 	//zerolog.SetGlobalLevel(zerolog.WarnLevel)
 
 	const iniBalanceA = 300
-	nodes, _ := tests.Setup_n_peers_bc(t, 5, 1, "2s", []float64{float64(iniBalanceA)}, false, true)
+	nodes, _ := setup(t, 5, 1, "2s", []float64{float64(iniBalanceA)}, time.Second*3)
 	nodeA, nodeB, nodeC, nodeD, nodeE := nodes[0], nodes[1], nodes[2], nodes[3], nodes[4]
 	defer nodeA.Stop()
 	defer nodeB.Stop()
@@ -369,7 +376,7 @@ func Test_Throughput_Complex_3_nodes(t *testing.T) {
 	//zerolog.SetGlobalLevel(zerolog.WarnLevel)
 
 	const iniBalanceA = 300
-	nodes, _ := tests.Setup_n_peers_bc(t, 3, 1, "2s", []float64{float64(iniBalanceA)}, false, true)
+	nodes, _ := setup(t, 3, 1, "2s", []float64{float64(iniBalanceA)}, time.Millisecond*200)
 	nodeA, nodeB, nodeC := nodes[0], nodes[1], nodes[2]
 	defer nodeA.Stop()
 	defer nodeB.Stop()
@@ -428,7 +435,7 @@ func Test_Throughput_Complex_4_nodes(t *testing.T) {
 	//zerolog.SetGlobalLevel(zerolog.WarnLevel)
 
 	const iniBalanceA = 500
-	nodes, _ := tests.Setup_n_peers_bc(t, 4, 1, "5s", []float64{float64(iniBalanceA)}, false, true)
+	nodes, _ := setup(t, 4, 1, "5s", []float64{float64(iniBalanceA)}, time.Second)
 	nodeA, nodeB, nodeC, nodeD := nodes[0], nodes[1], nodes[2], nodes[3]
 	defer nodeA.Stop()
 	defer nodeB.Stop()
@@ -491,7 +498,7 @@ func Test_Throughput_maxTxn_3_nodes(t *testing.T) {
 	//zerolog.SetGlobalLevel(zerolog.WarnLevel)
 
 	const iniBalanceA = 300
-	nodes, _ := tests.Setup_n_peers_bc(t, 3, 7, "2s", []float64{float64(iniBalanceA)}, false, true)
+	nodes, _ := setup(t, 3, 7, "2s", []float64{float64(iniBalanceA)}, time.Second*3)
 	nodeA, nodeB, nodeC := nodes[0], nodes[1], nodes[2]
 	defer nodeA.Stop()
 	defer nodeB.Stop()
@@ -551,7 +558,7 @@ func Test_Throughput_timeout_3_nodes(t *testing.T) {
 	//zerolog.SetGlobalLevel(zerolog.WarnLevel)
 
 	const iniBalanceA = 300
-	nodes, _ := tests.Setup_n_peers_bc(t, 3, 5, "5s", []float64{float64(iniBalanceA)}, false, true)
+	nodes, _ := setup(t, 3, 5, "5s", []float64{float64(iniBalanceA)}, time.Millisecond*200)
 	nodeA, nodeB, nodeC := nodes[0], nodes[1], nodes[2]
 	defer nodeA.Stop()
 	defer nodeB.Stop()
