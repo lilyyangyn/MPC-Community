@@ -61,6 +61,7 @@ func Test_HW3_Paxos_Acceptor_Prepare_Wrong_Step(t *testing.T) {
 	// sending a prepare with a wrong step
 
 	prepare := types.PaxosPrepareMessage{
+		Type:   types.PaxosTypeTag,
 		Step:   99, // wrong step
 		ID:     1,
 		Source: proposer.GetAddress(),
@@ -106,6 +107,7 @@ func Test_HW3_Paxos_Acceptor_Prepare_Wrong_ID(t *testing.T) {
 	// sending a prepare with an ID too low
 
 	prepare := types.PaxosPrepareMessage{
+		Type:   types.PaxosTypeTag,
 		Step:   0,
 		ID:     0, // ID too low
 		Source: proposer.GetAddress(),
@@ -151,6 +153,7 @@ func Test_HW3_Paxos_Acceptor_Prepare_Correct(t *testing.T) {
 	// sending a prepare with a high ID, must then be taken into account
 
 	prepare := types.PaxosPrepareMessage{
+		Type:   types.PaxosTypeTag,
 		Step:   0,
 		ID:     99,
 		Source: proposer.GetAddress(),
@@ -214,14 +217,18 @@ func Test_HW3_Paxos_Acceptor_Propose_Wrong_Step(t *testing.T) {
 
 	// sending a propose with a wrong step
 
+	proposeVal, err := types.CreatePaxosValue(types.PaxosTagValue{
+		UniqID:   "xxx",
+		Filename: "a",
+		Metahash: "b",
+	})
+	require.NoError(t, err)
+
 	propose := types.PaxosProposeMessage{
-		Step: 99, // wrong step
-		ID:   1,
-		Value: types.PaxosValue{
-			UniqID:   "xxx",
-			Filename: "a",
-			Metahash: "b",
-		},
+		Type:  types.PaxosTypeTag,
+		Step:  99, // wrong step
+		ID:    1,
+		Value: *proposeVal,
 	}
 
 	transpMsg, err := acceptor.GetRegistry().MarshalMessage(&propose)
@@ -263,16 +270,20 @@ func Test_HW3_Paxos_Acceptor_Propose_Wrong_ID(t *testing.T) {
 
 	// sending a propose with a wrong ID
 
+	proposeVal, err := types.CreatePaxosValue(types.PaxosTagValue{
+		UniqID:   "xxx",
+		Filename: "a",
+		Metahash: "b",
+	})
+	require.NoError(t, err)
+
 	propose := types.PaxosProposeMessage{
+		Type: types.PaxosTypeTag,
 		Step: 0,
 		// ID too high: 0 is expected since MaxID of a proposer starts at 0 and
 		// the proposer hasn't received any prepare, so its MaxID = 0.
-		ID: 2,
-		Value: types.PaxosValue{
-			UniqID:   "xxx",
-			Filename: "a",
-			Metahash: "b",
-		},
+		ID:    2,
+		Value: *proposeVal,
 	}
 
 	transpMsg, err := acceptor.GetRegistry().MarshalMessage(&propose)
@@ -313,6 +324,7 @@ func Test_HW3_Paxos_Acceptor_Prepare_Already_Promised(t *testing.T) {
 	acceptor.AddPeer(proposer.GetAddress())
 
 	prepare := types.PaxosPrepareMessage{
+		Type: types.PaxosTypeTag,
 		Step: 0,
 		ID:   5,
 	}
@@ -334,14 +346,18 @@ func Test_HW3_Paxos_Acceptor_Prepare_Already_Promised(t *testing.T) {
 
 	// sending a propose, will make the proposer set its MaxID
 
+	proposeVal, err := types.CreatePaxosValue(types.PaxosTagValue{
+		UniqID:   "xxx",
+		Filename: "a",
+		Metahash: "b",
+	})
+	require.NoError(t, err)
+
 	propose := types.PaxosProposeMessage{
-		Step: 0,
-		ID:   5,
-		Value: types.PaxosValue{
-			UniqID:   "xxx",
-			Filename: "a",
-			Metahash: "b",
-		},
+		Type:  types.PaxosTypeTag,
+		Step:  0,
+		ID:    5,
+		Value: *proposeVal,
 	}
 
 	transpMsg, err = acceptor.GetRegistry().MarshalMessage(&propose)
@@ -363,6 +379,7 @@ func Test_HW3_Paxos_Acceptor_Prepare_Already_Promised(t *testing.T) {
 	// return the promise ID and promise value.
 
 	prepare = types.PaxosPrepareMessage{
+		Type: types.PaxosTypeTag,
 		Step: 0,
 		ID:   9, // higher ID
 	}
@@ -412,8 +429,13 @@ func Test_HW3_Paxos_Acceptor_Prepare_Already_Promised(t *testing.T) {
 		require.Equal(t, uint(0), promise.Step)
 		require.Equal(t, uint(5), promise.AcceptedID)
 		require.Equal(t, "xxx", promise.AcceptedValue.UniqID)
-		require.Equal(t, "a", promise.AcceptedValue.Filename)
-		require.Equal(t, "b", promise.AcceptedValue.Metahash)
+
+		value, err := types.ParsePaxosValueContent(promise.AcceptedValue)
+		require.NoError(t, err)
+		tagvalue, ok := value.(*types.PaxosTagValue)
+		require.True(t, ok)
+		require.Equal(t, "a", tagvalue.Filename)
+		require.Equal(t, "b", tagvalue.Metahash)
 
 		found = true
 		break
@@ -437,14 +459,18 @@ func Test_HW3_Paxos_Acceptor_Propose_Correct(t *testing.T) {
 
 	acceptor.AddPeer(proposer.GetAddress())
 
+	proposeVal, err := types.CreatePaxosValue(types.PaxosTagValue{
+		UniqID:   "xxx",
+		Filename: "a",
+		Metahash: "b",
+	})
+	require.NoError(t, err)
+
 	propose := types.PaxosProposeMessage{
-		Step: 0,
-		ID:   0,
-		Value: types.PaxosValue{
-			UniqID:   "xxx",
-			Filename: "a",
-			Metahash: "b",
-		},
+		Type:  types.PaxosTypeTag,
+		Step:  0,
+		ID:    0,
+		Value: *proposeVal,
 	}
 
 	transpMsg, err := acceptor.GetRegistry().MarshalMessage(&propose)
@@ -475,8 +501,14 @@ func Test_HW3_Paxos_Acceptor_Propose_Correct(t *testing.T) {
 
 	require.Equal(t, uint(0), accept.ID)
 	require.Equal(t, uint(0), accept.Step)
-	require.Equal(t, "a", accept.Value.Filename)
-	require.Equal(t, "b", accept.Value.Metahash)
+
+	value, err := types.ParsePaxosValueContent(&accept.Value)
+	require.NoError(t, err)
+	tagvalue, ok := value.(*types.PaxosTagValue)
+	require.True(t, ok)
+
+	require.Equal(t, "a", tagvalue.Filename)
+	require.Equal(t, "b", tagvalue.Metahash)
 	require.Equal(t, "xxx", accept.Value.UniqID)
 }
 
@@ -531,6 +563,7 @@ func Test_HW3_Paxos_Proposer_Prepare_Promise_Wrong_Step(t *testing.T) {
 	// sending back a promise with a wrong step
 
 	promise := types.PaxosPromiseMessage{
+		Type: types.PaxosTypeTag,
 		Step: 99,
 		ID:   paxosID,
 	}
@@ -605,6 +638,7 @@ func Test_HW3_Paxos_Proposer_Prepare_Propose_Correct(t *testing.T) {
 	// sending back a correct promise
 
 	promise := types.PaxosPromiseMessage{
+		Type: types.PaxosTypeTag,
 		Step: 0,
 		ID:   paxosID,
 	}
@@ -640,8 +674,14 @@ func Test_HW3_Paxos_Proposer_Prepare_Propose_Correct(t *testing.T) {
 
 	require.Equal(t, paxosID, proposes[0].ID)
 	require.Equal(t, uint(0), proposes[0].Step)
-	require.Equal(t, "name", proposes[0].Value.Filename)
-	require.Equal(t, "metahash", proposes[0].Value.Metahash)
+
+	value, err := types.ParsePaxosValueContent(&proposes[0].Value)
+	require.NoError(t, err)
+	tagvalue, ok := value.(*types.PaxosTagValue)
+	require.True(t, ok)
+
+	require.Equal(t, "name", tagvalue.Filename)
+	require.Equal(t, "metahash", tagvalue.Metahash)
 }
 
 // 3-11
@@ -665,16 +705,20 @@ func Test_HW3_TLC_Move_Step_Not_Enough(t *testing.T) {
 	blockHash := "9efc06df7e54b580ebb0e7d7e52cdf05773cf5165c2a2d1a52cdc9ab6fd442e0"
 	previousHash := [32]byte{}
 
+	tlcVal, err := types.CreatePaxosValue(types.PaxosTagValue{
+		UniqID:   "xxx",
+		Filename: "a",
+		Metahash: "b",
+	})
+	require.NoError(t, err)
+
 	tlc := types.TLCMessage{
+		Type: types.PaxosTypeTag,
 		Step: 0,
 		Block: types.BlockchainBlock{
-			Index: 0,
-			Hash:  z.MustDecode(blockHash),
-			Value: types.PaxosValue{
-				UniqID:   "xxx",
-				Filename: "a",
-				Metahash: "b",
-			},
+			Index:    0,
+			Hash:     z.MustDecode(blockHash),
+			Value:    *tlcVal,
 			PrevHash: previousHash[:],
 		},
 	}
@@ -741,16 +785,20 @@ func Test_HW3_TLC_Move_Step_OK(t *testing.T) {
 	blockHash := "9efc06df7e54b580ebb0e7d7e52cdf05773cf5165c2a2d1a52cdc9ab6fd442e0"
 	previousHash := [32]byte{}
 
+	tlcVal, err := types.CreatePaxosValue(types.PaxosTagValue{
+		UniqID:   "xxx",
+		Filename: "a",
+		Metahash: "b",
+	})
+	require.NoError(t, err)
+
 	tlc := types.TLCMessage{
+		Type: types.PaxosTypeTag,
 		Step: 0,
 		Block: types.BlockchainBlock{
-			Index: 0,
-			Hash:  z.MustDecode(blockHash),
-			Value: types.PaxosValue{
-				UniqID:   "xxx",
-				Filename: "a",
-				Metahash: "b",
-			},
+			Index:    0,
+			Hash:     z.MustDecode(blockHash),
+			Value:    *tlcVal,
 			PrevHash: previousHash[:],
 		},
 	}
@@ -791,7 +839,7 @@ func Test_HW3_TLC_Move_Step_OK(t *testing.T) {
 
 	// > node1 must have the block hash in the LasBlockKey store
 
-	require.Equal(t, z.MustDecode(blockHash), store.Get(storage.LastBlockKey))
+	require.Equal(t, z.MustDecode(blockHash), store.Get(storage.TagLastBlockKey))
 
 	// > node1 must have the name in its name store
 
@@ -819,16 +867,20 @@ func Test_HW3_TLC_Move_Step_Catchup(t *testing.T) {
 	blockHash0 := "9efc06df7e54b580ebb0e7d7e52cdf05773cf5165c2a2d1a52cdc9ab6fd442e0"
 	previousHash0 := [32]byte{}
 
+	tlcVal0, err := types.CreatePaxosValue(types.PaxosTagValue{
+		UniqID:   "xxx",
+		Filename: "a",
+		Metahash: "b",
+	})
+	require.NoError(t, err)
+
 	tlc0 := types.TLCMessage{
+		Type: types.PaxosTypeTag,
 		Step: 0,
 		Block: types.BlockchainBlock{
-			Index: 0,
-			Hash:  z.MustDecode(blockHash0),
-			Value: types.PaxosValue{
-				UniqID:   "xxx",
-				Filename: "a",
-				Metahash: "b",
-			},
+			Index:    0,
+			Hash:     z.MustDecode(blockHash0),
+			Value:    *tlcVal0,
 			PrevHash: previousHash0[:],
 		},
 	}
@@ -836,16 +888,20 @@ func Test_HW3_TLC_Move_Step_Catchup(t *testing.T) {
 	// computed by hand
 	blockHash1 := "85a4ef7563349ee08c1ce7b669b1cff5afad5f8f47e6c1be307498e981efbfab"
 
+	tlcVal1, err := types.CreatePaxosValue(types.PaxosTagValue{
+		UniqID:   "yyy",
+		Filename: "e",
+		Metahash: "f",
+	})
+	require.NoError(t, err)
+
 	tlc1 := types.TLCMessage{
+		Type: types.PaxosTypeTag,
 		Step: 1,
 		Block: types.BlockchainBlock{
-			Index: 1,
-			Hash:  z.MustDecode(blockHash1),
-			Value: types.PaxosValue{
-				UniqID:   "yyy",
-				Filename: "e",
-				Metahash: "f",
-			},
+			Index:    1,
+			Hash:     z.MustDecode(blockHash1),
+			Value:    *tlcVal1,
 			PrevHash: z.MustDecode(blockHash0),
 		},
 	}
@@ -853,16 +909,20 @@ func Test_HW3_TLC_Move_Step_Catchup(t *testing.T) {
 	// computed by hand
 	blockHash2 := "4db12a08ff475592180e74b569fd936afef15eeb682bfcc203cb8eb03b8a52f5"
 
+	tlcVal2, err := types.CreatePaxosValue(types.PaxosTagValue{
+		UniqID:   "zzz",
+		Filename: "g",
+		Metahash: "h",
+	})
+	require.NoError(t, err)
+
 	tlc2 := types.TLCMessage{
+		Type: types.PaxosTypeTag,
 		Step: 2,
 		Block: types.BlockchainBlock{
-			Index: 2,
-			Hash:  z.MustDecode(blockHash2),
-			Value: types.PaxosValue{
-				UniqID:   "zzz",
-				Filename: "g",
-				Metahash: "h",
-			},
+			Index:    2,
+			Hash:     z.MustDecode(blockHash2),
+			Value:    *tlcVal2,
 			PrevHash: z.MustDecode(blockHash1),
 		},
 	}
@@ -937,7 +997,7 @@ func Test_HW3_TLC_Move_Step_Catchup(t *testing.T) {
 
 	// > node1 must have the block hash in the LasBlockKey store
 
-	require.Equal(t, z.MustDecode(blockHash2), store.Get(storage.LastBlockKey))
+	require.Equal(t, z.MustDecode(blockHash2), store.Get(storage.TagLastBlockKey))
 
 	// > node1 must have 3 names in its name store
 
@@ -1044,8 +1104,14 @@ func Test_HW3_Tag_Paxos_Simple_Consensus(t *testing.T) {
 
 	require.Equal(t, uint(1), propose.ID)
 	require.Equal(t, uint(0), propose.Step)
-	require.Equal(t, "a", propose.Value.Filename)
-	require.Equal(t, "b", propose.Value.Metahash)
+
+	value, err := types.ParsePaxosValueContent(&propose.Value)
+	require.NoError(t, err)
+	tagvalue, ok := value.(*types.PaxosTagValue)
+	require.True(t, ok)
+
+	require.Equal(t, "a", tagvalue.Filename)
+	require.Equal(t, "b", tagvalue.Metahash)
 
 	// >> Rumor(4):PaxosAccept
 
@@ -1060,8 +1126,14 @@ func Test_HW3_Tag_Paxos_Simple_Consensus(t *testing.T) {
 
 	require.Equal(t, uint(1), accept.ID)
 	require.Equal(t, uint(0), accept.Step)
-	require.Equal(t, "a", accept.Value.Filename)
-	require.Equal(t, "b", accept.Value.Metahash)
+
+	value, err = types.ParsePaxosValueContent(&accept.Value)
+	require.NoError(t, err)
+	tagvalue, ok = value.(*types.PaxosTagValue)
+	require.True(t, ok)
+
+	require.Equal(t, "a", tagvalue.Filename)
+	require.Equal(t, "b", tagvalue.Metahash)
 
 	// >> Rumor(5):TLC
 
@@ -1077,8 +1149,14 @@ func Test_HW3_Tag_Paxos_Simple_Consensus(t *testing.T) {
 	require.Equal(t, uint(0), tlc.Step)
 	require.Equal(t, uint(0), tlc.Block.Index)
 	require.Equal(t, make([]byte, 32), tlc.Block.PrevHash)
-	require.Equal(t, "a", tlc.Block.Value.Filename)
-	require.Equal(t, "b", tlc.Block.Value.Metahash)
+
+	value, err = types.ParsePaxosValueContent(&tlc.Block.Value)
+	require.NoError(t, err)
+	tagvalue, ok = value.(*types.PaxosTagValue)
+	require.True(t, ok)
+
+	require.Equal(t, "a", tagvalue.Filename)
+	require.Equal(t, "b", tagvalue.Metahash)
 
 	// > node2 must have sent
 	//
@@ -1123,8 +1201,14 @@ func Test_HW3_Tag_Paxos_Simple_Consensus(t *testing.T) {
 
 	require.Equal(t, uint(1), accept.ID)
 	require.Equal(t, uint(0), accept.Step)
-	require.Equal(t, "a", accept.Value.Filename)
-	require.Equal(t, "b", accept.Value.Metahash)
+
+	value, err = types.ParsePaxosValueContent(&accept.Value)
+	require.NoError(t, err)
+	tagvalue, ok = value.(*types.PaxosTagValue)
+	require.True(t, ok)
+
+	require.Equal(t, "a", tagvalue.Filename)
+	require.Equal(t, "b", tagvalue.Metahash)
 
 	// >> Rumor(3):TLC
 
@@ -1140,8 +1224,14 @@ func Test_HW3_Tag_Paxos_Simple_Consensus(t *testing.T) {
 	require.Equal(t, uint(0), tlc.Step)
 	require.Equal(t, uint(0), tlc.Block.Index)
 	require.Equal(t, make([]byte, 32), tlc.Block.PrevHash)
-	require.Equal(t, "a", tlc.Block.Value.Filename)
-	require.Equal(t, "b", tlc.Block.Value.Metahash)
+
+	value, err = types.ParsePaxosValueContent(&tlc.Block.Value)
+	require.NoError(t, err)
+	tagvalue, ok = value.(*types.PaxosTagValue)
+	require.True(t, ok)
+
+	require.Equal(t, "a", tagvalue.Filename)
+	require.Equal(t, "b", tagvalue.Metahash)
 
 	// > node1 name store is updated
 
@@ -1161,7 +1251,7 @@ func Test_HW3_Tag_Paxos_Simple_Consensus(t *testing.T) {
 
 	require.Equal(t, 2, bstore.Len())
 
-	lastBlockHash := bstore.Get(storage.LastBlockKey)
+	lastBlockHash := bstore.Get(storage.TagLastBlockKey)
 	lastBlock := bstore.Get(hex.EncodeToString(lastBlockHash))
 
 	var block types.BlockchainBlock
@@ -1171,8 +1261,14 @@ func Test_HW3_Tag_Paxos_Simple_Consensus(t *testing.T) {
 
 	require.Equal(t, uint(0), block.Index)
 	require.Equal(t, make([]byte, 32), block.PrevHash)
-	require.Equal(t, "a", block.Value.Filename)
-	require.Equal(t, "b", block.Value.Metahash)
+
+	value, err = types.ParsePaxosValueContent(&block.Value)
+	require.NoError(t, err)
+	tagvalue, ok = value.(*types.PaxosTagValue)
+	require.True(t, ok)
+
+	require.Equal(t, "a", tagvalue.Filename)
+	require.Equal(t, "b", tagvalue.Metahash)
 
 	// > node2 blockchain store contains two elements
 
@@ -1180,7 +1276,7 @@ func Test_HW3_Tag_Paxos_Simple_Consensus(t *testing.T) {
 
 	require.Equal(t, 2, bstore.Len())
 
-	lastBlockHash = bstore.Get(storage.LastBlockKey)
+	lastBlockHash = bstore.Get(storage.TagLastBlockKey)
 	lastBlock = bstore.Get(hex.EncodeToString(lastBlockHash))
 
 	err = block.Unmarshal(lastBlock)
@@ -1188,8 +1284,14 @@ func Test_HW3_Tag_Paxos_Simple_Consensus(t *testing.T) {
 
 	require.Equal(t, uint(0), block.Index)
 	require.Equal(t, make([]byte, 32), block.PrevHash)
-	require.Equal(t, "a", block.Value.Filename)
-	require.Equal(t, "b", block.Value.Metahash)
+
+	value, err = types.ParsePaxosValueContent(&block.Value)
+	require.NoError(t, err)
+	tagvalue, ok = value.(*types.PaxosTagValue)
+	require.True(t, ok)
+
+	require.Equal(t, "a", tagvalue.Filename)
+	require.Equal(t, "b", tagvalue.Metahash)
 }
 
 // 3-15
@@ -1464,16 +1566,16 @@ func Test_HW3_Tag_Paxos_Catchup(t *testing.T) {
 	blockStore2 := node2.GetStorage().GetBlockchainStore()
 	blockStore3 := node3.GetStorage().GetBlockchainStore()
 
-	require.Equal(t, blockStore1.Get(storage.LastBlockKey), blockStore2.Get(storage.LastBlockKey))
-	require.Equal(t, blockStore1.Get(storage.LastBlockKey), blockStore3.Get(storage.LastBlockKey))
+	require.Equal(t, blockStore1.Get(storage.TagLastBlockKey), blockStore2.Get(storage.TagLastBlockKey))
+	require.Equal(t, blockStore1.Get(storage.TagLastBlockKey), blockStore3.Get(storage.TagLastBlockKey))
 
 	// > validate the chain in each store
 
-	z.ValidateBlockchain(t, blockStore1)
+	z.ValidateBlockchain(t, blockStore1, storage.TagLastBlockKey)
 
-	z.ValidateBlockchain(t, blockStore2)
+	z.ValidateBlockchain(t, blockStore2, storage.TagLastBlockKey)
 
-	z.ValidateBlockchain(t, blockStore3)
+	z.ValidateBlockchain(t, blockStore3, storage.TagLastBlockKey)
 }
 
 // 3-19
@@ -1532,13 +1634,13 @@ func Test_HW3_Tag_Paxos_Consensus_Stress_Test(t *testing.T) {
 		store := node.GetStorage().GetBlockchainStore()
 		require.Equal(t, numMessages*numNodes+1, store.Len())
 
-		lastHashes[string(store.Get(storage.LastBlockKey))] = struct{}{}
+		lastHashes[string(store.Get(storage.TagLastBlockKey))] = struct{}{}
 
-		z.ValidateBlockchain(t, store)
+		z.ValidateBlockchain(t, store, storage.TagLastBlockKey)
 
 		require.Equal(t, numMessages*numNodes, node.GetStorage().GetNamingStore().Len())
 
-		z.DisplayLastBlockchainBlock(t, os.Stdout, node.GetStorage().GetBlockchainStore())
+		z.DisplayLastBlockchainBlock(t, os.Stdout, node.GetStorage().GetBlockchainStore(), storage.TagLastBlockKey)
 	}
 
 	// > all peers must have the same last hash

@@ -1,0 +1,199 @@
+package blockchain
+
+import (
+	"context"
+	"time"
+
+	"github.com/rs/zerolog/log"
+	permissioned "go.dedis.ch/cs438/permissioned-chain"
+)
+
+// -----------------------------------------------------------------------------
+// Miner
+
+func (m *BlockchainModule) Mine(ctx context.Context, txnPool *TxnPool) {
+	// wait until the blockchain's genesis block is set
+	_ = m.WaitBlock()
+	log.Info().Msgf("Start mining")
+out:
+	for {
+		select {
+		case <-ctx.Done():
+			return
+		case info := <-m.minerChan:
+			latestBlock := m.GetLatestBlock()
+			if latestBlock == nil {
+				continue
+			}
+			if info.Height != latestBlock.Height {
+				// 	// log.Error().Msgf("miner mining on incoorect height. Expected: %d. Got: %d",
+				// 	// 	prevHeight, latestBlock.Height)
+				continue out
+			}
+			prevHeight := latestBlock.Height
+
+			log.Info().Msgf("Mining on height=%d...", prevHeight+1)
+			newBlock := createBlock(ctx, txnPool,
+				m.wallet.GetAddress().Hex, latestBlock)
+			if newBlock == nil {
+				continue out
+			}
+			if !info.Miner {
+				// put the transactions back to the pool
+				m.txnPool.PushBackSeveral(newBlock.Transactions)
+				continue out
+			}
+
+			// validate block
+			if m.CheckBlockHeight(newBlock) != permissioned.BlockCompareMatched {
+				log.Error().Msgf("mined block has an invalid block height %d", newBlock.Height)
+				// put the transactions back to the pool
+				m.txnPool.PushBackSeveral(newBlock.Transactions)
+				continue out
+			}
+			log.Info().Msgf("Mined block %s on height=%d. Broadcasting...",
+				newBlock.Hash(), newBlock.Height)
+
+			// broadcast block
+			participants := make(map[string]struct{})
+			config := latestBlock.GetConfig()
+			for p := range config.Participants {
+				participants[p] = struct{}{}
+			}
+			err := m.broadcastBCBlkMessage(participants, newBlock)
+			if err != nil {
+				log.Err(err).Send()
+			}
+		}
+	}
+}
+
+func createBlock(ctx context.Context, txnPool *TxnPool,
+	miner string, prevBlock *permissioned.Block) *permissioned.Block {
+
+	worldState := prevBlock.GetWorldStateCopy()
+	config := permissioned.GetConfigFromWorldState(worldState)
+	blkBuilder := permissioned.NewBlockBuilder()
+	blkBuilder.SetPrevHash(prevBlock.Hash()).
+		SetHeight(prevBlock.Height + 1).
+		SetMiner(miner)
+	txnCount := 0
+
+	duration := getBlockTimeout(config)
+	timeout := time.After(duration)
+out:
+	for {
+		select {
+		case <-ctx.Done():
+			return nil
+		case <-timeout:
+			if txnCount > 0 {
+				// if any txn, then produce the block
+				break out
+			}
+		case signedTxn := <-txnPool.channel:
+			// coinbase trasaction can only be created by miner
+			if signedTxn.Txn.Type == permissioned.TxnTypeCoinbase {
+				continue
+			}
+
+			err := signedTxn.Verify(worldState)
+			if err != nil {
+				// if too advance nonce, put txn back to txn pool
+				if err == permissioned.ErrNonceTooAdvace {
+					txnPool.Push(signedTxn)
+					continue
+				}
+				log.Warn().Msgf("%s", err)
+				continue
+			}
+			err = blkBuilder.AddTxn(signedTxn)
+			if err != nil {
+				break out
+			}
+			txnCount++
+
+			if txnCount == config.MaxTxnsPerBlk {
+				break out
+			}
+
+			// reset timeout if a txn is successfuly append
+			timeout = time.After(duration)
+		}
+	}
+
+	blkBuilder.SetState(worldState)
+
+	return blkBuilder.Build()
+}
+
+// -----------------------------------------------------------------------------
+// Accepter
+
+func (m *BlockchainModule) VerifyBlock(ctx context.Context) {
+	log.Info().Msgf("Start verifying")
+
+	for {
+		select {
+		case <-ctx.Done():
+			return
+		default:
+			// block := <-m.blkChan:
+			block := m.blkPool.Get(ctx)
+			if block == nil {
+				continue
+			}
+			log.Info().Msgf("Verifying block %s on height=%d...",
+				block.Hash(), block.Height)
+
+			result := m.CheckBlockHeight(block)
+			if result == permissioned.BlockCompareAdvance ||
+				result == permissioned.BlockCompareNotInitialize {
+				// block too advance. Syncing
+				log.Info().Msgf("receive advance block on height %d. Syncing...", block.Height)
+				// err := m.sync(block.Miner)
+				// if err != nil {
+				// 	log.Err(err).Send()
+				// }
+				m.blkPool.Add(block)
+				continue
+			} else if result != permissioned.BlockCompareMatched {
+				log.Error().Msgf("block %s is invalid. Error code: %d",
+					block.Hash(), result)
+				continue
+			}
+
+			// validate consensus
+			expectedMiner := m.cr.getLatestMiner()
+			if expectedMiner != block.Miner {
+				log.Error().Msgf("invalid miner. Expected: %s. Got: %s",
+					expectedMiner, block.Miner)
+				continue
+			}
+
+			// append the block
+			err := m.AppendBlock(block)
+			if err != nil {
+				log.Err(err).Send()
+				continue
+			}
+			log.Info().Msgf("Append Block %s successfully",
+				block.Hash())
+			// notify outside for the received transactions
+			go func() {
+				m.wallet.Sync(block.States)
+
+				config := permissioned.GetConfigFromWorldState(block.States)
+				for _, signedTxn := range block.Transactions {
+					err = m.watchRegistry.Tell(config, &signedTxn.Txn)
+					if err != nil {
+						log.Err(err).Send()
+					}
+				}
+			}()
+
+			// select next miner
+			m.selectNextMiner(block)
+		}
+	}
+}

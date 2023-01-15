@@ -1,0 +1,362 @@
+a+b+c: PreMPC (4345), MPC (25792), PostMPC (13834)
+peerA: 
+    PreMPC:  1673811919896296630 (1862602789)
+    MPC:     1673811921758899419 (27338721)
+    PostMPC: 1673811921786238140 (10703249)
+    Finish:  1673811921796941389
+
+peerB:
+    PreMPC:  1673811921757121043 (957847)
+    MPC:     1673811921758078890 (29092567)
+    PostMPC: 1673811921787171457 (15519491)
+    Finish:  1673811921802690948
+
+peerC:
+    PreMPC:  1673811919897841175 (1866806930)
+    MPC:     1673811921764648105 (20946152)
+    PostMPC: 1673811921785594257 (15281329)
+    Finish:  1673811921800875586
+
+(a+b)*c: PreMPC (2641), MPC (42654), PostMPC (16513)
+peerA: 
+    PreMPC:  1673812010124194132 (4568727)
+    MPC:     1673812010128762859 (43056659)
+    PostMPC: 1673812010171819518 (1161887)
+    Finish:  1673812010172981405
+
+peerB:
+    PreMPC:  1673812010125246567 (1016609)
+    MPC:     1673812010126263176 (43994730)
+    PostMPC: 1673812010170257906 (23681353)
+    Finish:  1673812010193939259
+
+peerC:
+    PreMPC:  1673812010129339772 (2337734)
+    MPC:     1673812010131677506 (40911069)
+    PostMPC: 1673812010172588575 (24697841)
+    Finish:  1673812010197286416
+
+a*b*c: PreMPC (6195), MPC (79189), PostMPC (17072)
+peerA: 
+    PreMPC:  1673812108466617006 (6366821)
+    MPC:     1673812108472983827 (82452807)
+    PostMPC: 1673812108555436634 (17499066)
+    Finish:  1673812108572935700
+
+peerB:
+    PreMPC:  1673812108467995138 (7889176)
+    MPC:     1673812108475884314 (73855301)
+    PostMPC: 1673812108549739615 (25415645)
+    Finish:  1673812108575155260
+
+peerC:
+    PreMPC:  1673812108471486919 (4330105)
+    MPC:     1673812108475817024 (81260329)
+    PostMPC: 1673812108557077353 (8303462)
+    Finish:  1673812108565380815
+
+expression: a+b+c
+
+peerA:
+BENCHMARK, Time: 1673811919896296630. In function: GetPostfixAndVariables
+BENCHMARK, Time: 1673811919896454658. In function: Calculate Start
+BENCHMARK, Time: 1673811919896488370. In function: SendPreMPCTransaction
+BENCHMARK, Time: 1673811919896867361. In function: GetPostfixAndVariables
+BENCHMARK, Time: 1673811919896971293. In function: GetPostfixAndVariables
+BENCHMARK, Time: 1673811921758422095. In function: GetPostfixAndVariables
+BENCHMARK, Time: 1673811921758545101. In function: GetPostfixAndVariables
+BENCHMARK, Time: 1673811921758759363. In function: PreMPCTxnCallback Start
+BENCHMARK, Time: 1673811921758899419. In function: InitMPC
+BENCHMARK, Time: 1673811921758983493. In function: ComputeExpression start.
+BENCHMARK, Time: 1673811921758986216. In function: GetPostfixAndVariables
+BENCHMARK, Time: 1673811921759016808. In function: shareSecret start
+BENCHMARK, Time: 1673811921759018559. In function: SSSHalfDegree start
+BENCHMARK, Time: 1673811921759024168. In function: SSSHalfDegree end
+BENCHMARK, Time: 1673811921762646952. In function: shareSecret end
+BENCHMARK, Time: 1673811921779837786. In function: computeResult add start
+BENCHMARK, Time: 1673811921780090564. In function: computeResult add end
+BENCHMARK, Time: 1673811921780124372. In function: computeResult add start
+BENCHMARK, Time: 1673811921780127026. In function: computeResult add end
+BENCHMARK, Time: 1673811921786150910. In function: lagrangeInterpolitionZp start
+BENCHMARK, Time: 1673811921786194058. In function: lagrangeInterpolitionZp end
+BENCHMARK, Time: 1673811921786196105. In function: ComputeExpression end.
+BENCHMARK, Time: 1673811921786238140. In function: SendPostMPCTransaction
+BENCHMARK, Time: 1673811921786435192. In function: PreMPCTxnCallback end
+BENCHMARK, Time: 1673811921787601719. In function: PostMPCTxnCallback
+BENCHMARK, Time: 1673811921793596762. In function: PostMPCTxnCallback
+BENCHMARK, Time: 1673811921796941389. In function: PostMPCTxnCallback
+
+peerB:
+BENCHMARK, Time: 1673811921757121043. In function: GetPostfixAndVariables
+BENCHMARK, Time: 1673811921757223759. In function: GetPostfixAndVariables
+BENCHMARK, Time: 1673811921757866416. In function: GetPostfixAndVariables
+BENCHMARK, Time: 1673811921757982534. In function: GetPostfixAndVariables
+BENCHMARK, Time: 1673811921758046431. In function: PreMPCTxnCallback Start
+BENCHMARK, Time: 1673811921758078890. In function: InitMPC
+BENCHMARK, Time: 1673811921758085442. In function: ComputeExpression start.
+BENCHMARK, Time: 1673811921758086455. In function: GetPostfixAndVariables
+BENCHMARK, Time: 1673811921758112836. In function: shareSecret start
+BENCHMARK, Time: 1673811921758117444. In function: SSSHalfDegree start
+BENCHMARK, Time: 1673811921758122513. In function: SSSHalfDegree end
+BENCHMARK, Time: 1673811921768433873. In function: shareSecret end
+BENCHMARK, Time: 1673811921769670304. In function: computeResult add start
+BENCHMARK, Time: 1673811921769674147. In function: computeResult add end
+BENCHMARK, Time: 1673811921772260831. In function: computeResult add start
+BENCHMARK, Time: 1673811921772306241. In function: computeResult add end
+BENCHMARK, Time: 1673811921787144781. In function: lagrangeInterpolitionZp start
+BENCHMARK, Time: 1673811921787166953. In function: lagrangeInterpolitionZp end
+BENCHMARK, Time: 1673811921787168489. In function: ComputeExpression end.
+BENCHMARK, Time: 1673811921787171457. In function: SendPostMPCTransaction
+BENCHMARK, Time: 1673811921787569817. In function: PreMPCTxnCallback end
+BENCHMARK, Time: 1673811921789314377. In function: PostMPCTxnCallback
+BENCHMARK, Time: 1673811921794514840. In function: PostMPCTxnCallback
+BENCHMARK, Time: 1673811921802690948. In function: PostMPCTxnCallback
+
+peerC:
+BENCHMARK, Time: 1673811919897841175. In function: GetPostfixAndVariables
+BENCHMARK, Time: 1673811919897922166. In function: GetPostfixAndVariables
+BENCHMARK, Time: 1673811921763336619. In function: GetPostfixAndVariables
+BENCHMARK, Time: 1673811921763480326. In function: GetPostfixAndVariables
+BENCHMARK, Time: 1673811921764510399. In function: PreMPCTxnCallback Start
+BENCHMARK, Time: 1673811921764648105. In function: InitMPC
+BENCHMARK, Time: 1673811921764655116. In function: ComputeExpression start.
+BENCHMARK, Time: 1673811921764687452. In function: GetPostfixAndVariables
+BENCHMARK, Time: 1673811921764732905. In function: shareSecret start
+BENCHMARK, Time: 1673811921764734925. In function: SSSHalfDegree start
+BENCHMARK, Time: 1673811921764739022. In function: SSSHalfDegree end
+BENCHMARK, Time: 1673811921767841025. In function: shareSecret end
+BENCHMARK, Time: 1673811921785100756. In function: computeResult add start
+BENCHMARK, Time: 1673811921785255042. In function: computeResult add end
+BENCHMARK, Time: 1673811921785302832. In function: computeResult add start
+BENCHMARK, Time: 1673811921785305134. In function: computeResult add end
+BENCHMARK, Time: 1673811921785581610. In function: lagrangeInterpolitionZp start
+BENCHMARK, Time: 1673811921785590513. In function: lagrangeInterpolitionZp end
+BENCHMARK, Time: 1673811921785591739. In function: ComputeExpression end.
+BENCHMARK, Time: 1673811921785594257. In function: SendPostMPCTransaction
+BENCHMARK, Time: 1673811921787534304. In function: PreMPCTxnCallback end
+BENCHMARK, Time: 1673811921788010741. In function: PostMPCTxnCallback
+BENCHMARK, Time: 1673811921788783405. In function: PostMPCTxnCallback
+BENCHMARK, Time: 1673811921800875586. In function: PostMPCTxnCallback
+
+
+---
+
+expression: (a+b)*c
+peerA:
+BENCHMARK, Time: 1673812010124194132. In function: GetPostfixAndVariables
+BENCHMARK, Time: 1673812010124298539. In function: Calculate Start
+BENCHMARK, Time: 1673812010124338746. In function: SendPreMPCTransaction
+BENCHMARK, Time: 1673812010125340925. In function: GetPostfixAndVariables
+BENCHMARK, Time: 1673812010125374836. In function: GetPostfixAndVariables
+BENCHMARK, Time: 1673812010126833507. In function: GetPostfixAndVariables
+BENCHMARK, Time: 1673812010127487111. In function: GetPostfixAndVariables
+BENCHMARK, Time: 1673812010128359951. In function: PreMPCTxnCallback Start
+BENCHMARK, Time: 1673812010128762859. In function: InitMPC
+BENCHMARK, Time: 1673812010128897140. In function: ComputeExpression start.
+BENCHMARK, Time: 1673812010129039517. In function: GetPostfixAndVariables
+BENCHMARK, Time: 1673812010129080447. In function: shareSecret start
+BENCHMARK, Time: 1673812010129235774. In function: SSSHalfDegree start
+BENCHMARK, Time: 1673812010129244562. In function: SSSHalfDegree end
+BENCHMARK, Time: 1673812010135308104. In function: shareSecret end
+BENCHMARK, Time: 1673812010141112384. In function: computeResult add start
+BENCHMARK, Time: 1673812010141125100. In function: computeResult add end
+BENCHMARK, Time: 1673812010141130301. In function: computeResult Mult start
+BENCHMARK, Time: 1673812010141135888. In function: shareSecret start
+BENCHMARK, Time: 1673812010141140322. In function: SSSHalfDegree start
+BENCHMARK, Time: 1673812010141146241. In function: SSSHalfDegree end
+BENCHMARK, Time: 1673812010148721473. In function: shareSecret end
+BENCHMARK, Time: 1673812010162632785. In function: lagrangeInterpolitionZp start
+BENCHMARK, Time: 1673812010162688944. In function: lagrangeInterpolitionZp end
+BENCHMARK, Time: 1673812010162691228. In function: computeReuslt Mult end
+BENCHMARK, Time: 1673812010171732105. In function: lagrangeInterpolitionZp start
+BENCHMARK, Time: 1673812010171783139. In function: lagrangeInterpolitionZp end
+BENCHMARK, Time: 1673812010171801200. In function: ComputeExpression end.
+BENCHMARK, Time: 1673812010171819518. In function: SendPostMPCTransaction
+BENCHMARK, Time: 1673812010177834022. In function: PostMPCTxnCallback
+BENCHMARK, Time: 1673812010190145363. In function: PostMPCTxnCallback
+BENCHMARK, Time: 1673812010194987971. In function: PostMPCTxnCallback
+BENCHMARK, Time: 1673812010172981405. In function: PreMPCTxnCallback end
+
+peerB:
+BENCHMARK, Time: 1673812010125246567. In function: GetPostfixAndVariables
+BENCHMARK, Time: 1673812010125296980. In function: GetPostfixAndVariables
+BENCHMARK, Time: 1673812010125921319. In function: GetPostfixAndVariables
+BENCHMARK, Time: 1673812010125953631. In function: GetPostfixAndVariables
+BENCHMARK, Time: 1673812010126214152. In function: PreMPCTxnCallback Start
+BENCHMARK, Time: 1673812010126263176. In function: InitMPC
+BENCHMARK, Time: 1673812010126270862. In function: ComputeExpression start.
+BENCHMARK, Time: 1673812010126271873. In function: GetPostfixAndVariables
+BENCHMARK, Time: 1673812010126304680. In function: shareSecret start
+BENCHMARK, Time: 1673812010126306565. In function: SSSHalfDegree start
+BENCHMARK, Time: 1673812010126312822. In function: SSSHalfDegree end
+BENCHMARK, Time: 1673812010140219355. In function: shareSecret end
+BENCHMARK, Time: 1673812010140227480. In function: computeResult add start
+BENCHMARK, Time: 1673812010140229112. In function: computeResult add end
+BENCHMARK, Time: 1673812010140230435. In function: computeResult Mult start
+BENCHMARK, Time: 1673812010140232084. In function: shareSecret start
+BENCHMARK, Time: 1673812010140233516. In function: SSSHalfDegree start
+BENCHMARK, Time: 1673812010140236387. In function: SSSHalfDegree end
+BENCHMARK, Time: 1673812010145813992. In function: shareSecret end
+BENCHMARK, Time: 1673812010162860838. In function: lagrangeInterpolitionZp start
+BENCHMARK, Time: 1673812010162914463. In function: lagrangeInterpolitionZp end
+BENCHMARK, Time: 1673812010162916637. In function: computeReuslt Mult end
+BENCHMARK, Time: 1673812010170179108. In function: lagrangeInterpolitionZp start
+BENCHMARK, Time: 1673812010170252667. In function: lagrangeInterpolitionZp end
+BENCHMARK, Time: 1673812010170255535. In function: ComputeExpression end.
+BENCHMARK, Time: 1673812010170257906. In function: SendPostMPCTransaction
+BENCHMARK, Time: 1673812010170431128. In function: PreMPCTxnCallback end
+BENCHMARK, Time: 1673812010177770877. In function: PostMPCTxnCallback
+BENCHMARK, Time: 1673812010178198231. In function: PostMPCTxnCallback
+BENCHMARK, Time: 1673812010193939259. In function: PostMPCTxnCallback
+
+peerC:
+BENCHMARK, Time: 1673812010129339772. In function: GetPostfixAndVariables
+BENCHMARK, Time: 1673812010129459784. In function: GetPostfixAndVariables
+BENCHMARK, Time: 1673812010129664186. In function: GetPostfixAndVariables
+BENCHMARK, Time: 1673812010129738524. In function: GetPostfixAndVariables
+BENCHMARK, Time: 1673812010129870633. In function: PreMPCTxnCallback Start
+BENCHMARK, Time: 1673812010131677506. In function: InitMPC
+BENCHMARK, Time: 1673812010131685753. In function: ComputeExpression start.
+BENCHMARK, Time: 1673812010131686942. In function: GetPostfixAndVariables
+BENCHMARK, Time: 1673812010131736543. In function: shareSecret start
+BENCHMARK, Time: 1673812010131738903. In function: SSSHalfDegree start
+BENCHMARK, Time: 1673812010131783070. In function: SSSHalfDegree end
+BENCHMARK, Time: 1673812010140331762. In function: shareSecret end
+BENCHMARK, Time: 1673812010146418449. In function: computeResult add start
+BENCHMARK, Time: 1673812010146458057. In function: computeResult add end
+BENCHMARK, Time: 1673812010146461571. In function: computeResult Mult start
+BENCHMARK, Time: 1673812010146464023. In function: shareSecret start
+BENCHMARK, Time: 1673812010146466308. In function: SSSHalfDegree start
+BENCHMARK, Time: 1673812010146470139. In function: SSSHalfDegree end
+BENCHMARK, Time: 1673812010150257245. In function: shareSecret end
+BENCHMARK, Time: 1673812010160882861. In function: lagrangeInterpolitionZp start
+BENCHMARK, Time: 1673812010161084333. In function: lagrangeInterpolitionZp end
+BENCHMARK, Time: 1673812010161087324. In function: computeReuslt Mult end
+BENCHMARK, Time: 1673812010172461409. In function: lagrangeInterpolitionZp start
+BENCHMARK, Time: 1673812010172582614. In function: lagrangeInterpolitionZp end
+BENCHMARK, Time: 1673812010172585972. In function: ComputeExpression end.
+BENCHMARK, Time: 1673812010172588575. In function: SendPostMPCTransaction
+BENCHMARK, Time: 1673812010172785035. In function: PreMPCTxnCallback end
+BENCHMARK, Time: 1673812010173753191. In function: PostMPCTxnCallback
+BENCHMARK, Time: 1673812010195344482. In function: PostMPCTxnCallback
+BENCHMARK, Time: 1673812010197286416. In function: PostMPCTxnCallback
+---
+
+expression: a*b*c
+peerA:
+BENCHMARK, Time: 1673812108466617006. In function: GetPostfixAndVariables
+BENCHMARK, Time: 1673812108466924498. In function: Calculate Start
+BENCHMARK, Time: 1673812108466993309. In function: SendPreMPCTransaction
+BENCHMARK, Time: 1673812108468052817. In function: GetPostfixAndVariables
+BENCHMARK, Time: 1673812108468115108. In function: GetPostfixAndVariables
+BENCHMARK, Time: 1673812108472366584. In function: GetPostfixAndVariables
+BENCHMARK, Time: 1673812108472602516. In function: GetPostfixAndVariables
+BENCHMARK, Time: 1673812108472817368. In function: PreMPCTxnCallback Start
+BENCHMARK, Time: 1673812108472983827. In function: InitMPC
+BENCHMARK, Time: 1673812108472991660. In function: ComputeExpression start.
+BENCHMARK, Time: 1673812108472992775. In function: GetPostfixAndVariables
+BENCHMARK, Time: 1673812108473042082. In function: shareSecret start
+BENCHMARK, Time: 1673812108473044256. In function: SSSHalfDegree start
+BENCHMARK, Time: 1673812108473050453. In function: SSSHalfDegree end
+BENCHMARK, Time: 1673812108476194026. In function: shareSecret end
+BENCHMARK, Time: 1673812108490148937. In function: computeResult Mult start
+BENCHMARK, Time: 1673812108490162045. In function: shareSecret start
+BENCHMARK, Time: 1673812108490164532. In function: SSSHalfDegree start
+BENCHMARK, Time: 1673812108490168631. In function: SSSHalfDegree end
+BENCHMARK, Time: 1673812108493294658. In function: shareSecret end
+BENCHMARK, Time: 1673812108504638127. In function: lagrangeInterpolitionZp start
+BENCHMARK, Time: 1673812108504692832. In function: lagrangeInterpolitionZp end
+BENCHMARK, Time: 1673812108504695719. In function: computeReuslt Mult end
+BENCHMARK, Time: 1673812108504698710. In function: computeResult Mult start
+BENCHMARK, Time: 1673812108504702728. In function: shareSecret start
+BENCHMARK, Time: 1673812108504704941. In function: SSSHalfDegree start
+BENCHMARK, Time: 1673812108504708969. In function: SSSHalfDegree end
+BENCHMARK, Time: 1673812108519252855. In function: shareSecret end
+BENCHMARK, Time: 1673812108538814458. In function: lagrangeInterpolitionZp start
+BENCHMARK, Time: 1673812108539285346. In function: lagrangeInterpolitionZp end
+BENCHMARK, Time: 1673812108539291195. In function: computeReuslt Mult end
+BENCHMARK, Time: 1673812108555363477. In function: lagrangeInterpolitionZp start
+BENCHMARK, Time: 1673812108555430990. In function: lagrangeInterpolitionZp end
+BENCHMARK, Time: 1673812108555433409. In function: ComputeExpression end.
+BENCHMARK, Time: 1673812108555436634. In function: SendPostMPCTransaction
+BENCHMARK, Time: 1673812108555653500. In function: PreMPCTxnCallback end
+BENCHMARK, Time: 1673812108559362259. In function: PostMPCTxnCallback
+BENCHMARK, Time: 1673812108564606380. In function: PostMPCTxnCallback
+BENCHMARK, Time: 1673812108572935700. In function: PostMPCTxnCallback
+
+
+peerB:
+BENCHMARK, Time: 1673812108467995138. In function: GetPostfixAndVariables
+BENCHMARK, Time: 1673812108468090011. In function: GetPostfixAndVariables
+BENCHMARK, Time: 1673812108474809440. In function: GetPostfixAndVariables
+BENCHMARK, Time: 1673812108475353616. In function: GetPostfixAndVariables
+BENCHMARK, Time: 1673812108475867785. In function: PreMPCTxnCallback Start
+BENCHMARK, Time: 1673812108475884314. In function: InitMPC
+BENCHMARK, Time: 1673812108475894430. In function: ComputeExpression start.
+BENCHMARK, Time: 1673812108475895610. In function: GetPostfixAndVariables
+BENCHMARK, Time: 1673812108475938542. In function: shareSecret start
+BENCHMARK, Time: 1673812108475940606. In function: SSSHalfDegree start
+BENCHMARK, Time: 1673812108475946401. In function: SSSHalfDegree end
+BENCHMARK, Time: 1673812108482569174. In function: shareSecret end
+BENCHMARK, Time: 1673812108482609057. In function: computeResult Mult start
+BENCHMARK, Time: 1673812108482611993. In function: shareSecret start
+BENCHMARK, Time: 1673812108482613926. In function: SSSHalfDegree start
+BENCHMARK, Time: 1673812108482617155. In function: SSSHalfDegree end
+BENCHMARK, Time: 1673812108485582069. In function: shareSecret end
+BENCHMARK, Time: 1673812108512929082. In function: lagrangeInterpolitionZp start
+BENCHMARK, Time: 1673812108513081983. In function: lagrangeInterpolitionZp end
+BENCHMARK, Time: 1673812108513090306. In function: computeReuslt Mult end
+BENCHMARK, Time: 1673812108513097273. In function: computeResult Mult start
+BENCHMARK, Time: 1673812108513108824. In function: shareSecret start
+BENCHMARK, Time: 1673812108513114182. In function: SSSHalfDegree start
+BENCHMARK, Time: 1673812108513122019. In function: SSSHalfDegree end
+BENCHMARK, Time: 1673812108520415523. In function: shareSecret end
+BENCHMARK, Time: 1673812108540054888. In function: lagrangeInterpolitionZp start
+BENCHMARK, Time: 1673812108540106240. In function: lagrangeInterpolitionZp end
+BENCHMARK, Time: 1673812108540108421. In function: computeReuslt Mult end
+BENCHMARK, Time: 1673812108549506924. In function: lagrangeInterpolitionZp start
+BENCHMARK, Time: 1673812108549733180. In function: lagrangeInterpolitionZp end
+BENCHMARK, Time: 1673812108549736433. In function: ComputeExpression end.
+BENCHMARK, Time: 1673812108549739615. In function: SendPostMPCTransaction
+BENCHMARK, Time: 1673812108550049234. In function: PreMPCTxnCallback end
+BENCHMARK, Time: 1673812108550792248. In function: PostMPCTxnCallback
+BENCHMARK, Time: 1673812108566400005. In function: PostMPCTxnCallback
+BENCHMARK, Time: 1673812108575155260. In function: PostMPCTxnCallback
+
+peerC:
+BENCHMARK, Time: 1673812108471486919. In function: GetPostfixAndVariables
+BENCHMARK, Time: 1673812108471582208. In function: GetPostfixAndVariables
+BENCHMARK, Time: 1673812108472147263. In function: GetPostfixAndVariables
+BENCHMARK, Time: 1673812108475368366. In function: GetPostfixAndVariables
+BENCHMARK, Time: 1673812108475754172. In function: PreMPCTxnCallback Start
+BENCHMARK, Time: 1673812108475817024. In function: InitMPC
+BENCHMARK, Time: 1673812108475823194. In function: ComputeExpression start.
+BENCHMARK, Time: 1673812108475824772. In function: GetPostfixAndVariables
+BENCHMARK, Time: 1673812108475869647. In function: shareSecret start
+BENCHMARK, Time: 1673812108475871666. In function: SSSHalfDegree start
+BENCHMARK, Time: 1673812108475877249. In function: SSSHalfDegree end
+BENCHMARK, Time: 1673812108481052465. In function: shareSecret end
+BENCHMARK, Time: 1673812108493277231. In function: computeResult Mult start
+BENCHMARK, Time: 1673812108493283980. In function: shareSecret start
+BENCHMARK, Time: 1673812108493286332. In function: SSSHalfDegree start
+BENCHMARK, Time: 1673812108493289897. In function: SSSHalfDegree end
+BENCHMARK, Time: 1673812108496419568. In function: shareSecret end
+BENCHMARK, Time: 1673812108509335397. In function: lagrangeInterpolitionZp start
+BENCHMARK, Time: 1673812108509403811. In function: lagrangeInterpolitionZp end
+BENCHMARK, Time: 1673812108509406376. In function: computeReuslt Mult end
+BENCHMARK, Time: 1673812108509410219. In function: computeResult Mult start
+BENCHMARK, Time: 1673812108509420000. In function: shareSecret start
+BENCHMARK, Time: 1673812108509423100. In function: SSSHalfDegree start
+BENCHMARK, Time: 1673812108509428923. In function: SSSHalfDegree end
+BENCHMARK, Time: 1673812108516182759. In function: shareSecret end
+BENCHMARK, Time: 1673812108538860118. In function: lagrangeInterpolitionZp start
+BENCHMARK, Time: 1673812108538879657. In function: lagrangeInterpolitionZp end
+BENCHMARK, Time: 1673812108538881035. In function: computeReuslt Mult end
+BENCHMARK, Time: 1673812108557045923. In function: lagrangeInterpolitionZp start
+BENCHMARK, Time: 1673812108557072717. In function: lagrangeInterpolitionZp end
+BENCHMARK, Time: 1673812108557074490. In function: ComputeExpression end.
+BENCHMARK, Time: 1673812108557077353. In function: SendPostMPCTransaction
+BENCHMARK, Time: 1673812108557399074. In function: PreMPCTxnCallback end
+BENCHMARK, Time: 1673812108561726391. In function: PostMPCTxnCallback
+BENCHMARK, Time: 1673812108565092059. In function: PostMPCTxnCallback
+BENCHMARK, Time: 1673812108565380815. In function: PostMPCTxnCallback
