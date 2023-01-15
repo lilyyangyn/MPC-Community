@@ -1,5 +1,4 @@
 import matplotlib.pyplot as plt
-import numpy as np
 
 def simple_txn_throughput(save):
     x_data = [2, 4, 6, 8, 10, 12, 14, 16, 18, 20]

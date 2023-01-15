@@ -62,7 +62,7 @@ func Test_Throughput_Simple_Add_3_nodes(t *testing.T) {
 			require.NoError(t, err)
 
 			// try to minimize
-			time.Sleep(time.Millisecond * 10)
+			time.Sleep(time.Millisecond * 8)
 			//time.Sleep(time.Second * 3)
 
 			//timer(start, "MPC")
@@ -180,7 +180,7 @@ func Test_Throughput_Simple_Add_5_nodes(t *testing.T) {
 
 			// try to minimize
 			//time.Sleep(time.Millisecond * 500)
-			time.Sleep(time.Millisecond * 80)
+			time.Sleep(time.Millisecond * 200)
 		}
 		timer(overall, "overall execution")
 
@@ -233,7 +233,7 @@ func Test_Throughput_Simple_Mul_3_nodes(t *testing.T) {
 			require.NoError(t, err)
 
 			// try to minimize
-			time.Sleep(time.Millisecond * 10)
+			time.Sleep(time.Millisecond * 15)
 			//time.Sleep(time.Second * 3)
 
 			timer(start, "MPC")
@@ -291,7 +291,7 @@ func Test_Throughput_Simple_Mul_4_nodes(t *testing.T) {
 			require.NoError(t, err)
 
 			// try to minimize
-			time.Sleep(time.Millisecond * 40)
+			time.Sleep(time.Millisecond * 45)
 			//time.Sleep(time.Second * 3)
 
 			timer(start, "MPC")
@@ -350,7 +350,7 @@ func Test_Throughput_Simple_Mul_5_nodes(t *testing.T) {
 			require.NoError(t, err)
 
 			// try to minimize
-			time.Sleep(time.Millisecond * 80)
+			time.Sleep(time.Millisecond * 250)
 			//time.Sleep(time.Second * 3)
 
 			timer(start, "MPC")
