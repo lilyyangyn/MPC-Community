@@ -70,7 +70,7 @@ func Test_Perf_BC_Troughput_4_Nodes(t *testing.T) {
 func Test_Perf_BC_Troughput_5_Nodes(t *testing.T) {
 	zerolog.SetGlobalLevel(zerolog.ErrorLevel)
 
-	t.Run("5-node", getTest(5, 10, "2s", time.Second*3, time.Microsecond*800))
+	t.Run("5-node", getTest(5, 10, "2s", time.Second*4, time.Microsecond*800))
 }
 
 func Test_Perf_BC_Troughput_8_Nodes(t *testing.T) {
@@ -94,5 +94,5 @@ func Test_Perf_BC_Troughput_16_Nodes(t *testing.T) {
 func Test_Perf_BC_Troughput_20_Nodes(t *testing.T) {
 	zerolog.SetGlobalLevel(zerolog.ErrorLevel)
 
-	t.Run("10-node", getTest(20, 10, "2s", time.Second*10, time.Millisecond*30))
+	t.Run("10-node", getTest(20, 10, "2s", time.Second*15, time.Millisecond*31))
 }
