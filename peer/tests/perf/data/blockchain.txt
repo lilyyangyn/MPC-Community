@@ -1,8 +1,0 @@
-Benchmark took 510.143212ms. Node: 2, Sent: 1000
-Benchmark took 949.274284ms. Node: 3, Sent: 1000
-Benchmark took 1.197252827s. Node: 4, Sent: 1000
-Benchmark took 1.666426844s. Node: 5, Sent: 1000
-Benchmark took 4.145237745s. Node: 8, Sent: 1000
-Benchmark took 8.074317746s. Node: 10, Sent: 1000
-Benchmark took 21.148166825s. Node: 16, Sent: 1000
-Benchmark took 32.479116068s. Node: 20, Sent: 1000

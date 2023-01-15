@@ -67,10 +67,10 @@ func Test_Perf_BC_Troughput_4_Nodes(t *testing.T) {
 	t.Run("4-node", getTest(4, 10, "2s", time.Millisecond*800, time.Microsecond*650))
 }
 
-func Test_Perf_BC_Troughput_5_Nodes(t *testing.T) {
+func Test_Perf_BC_Troughput_6_Nodes(t *testing.T) {
 	zerolog.SetGlobalLevel(zerolog.ErrorLevel)
 
-	t.Run("5-node", getTest(5, 10, "2s", time.Second*4, time.Microsecond*800))
+	t.Run("5-node", getTest(6, 10, "2s", time.Second*4, time.Microsecond*800))
 }
 
 func Test_Perf_BC_Troughput_8_Nodes(t *testing.T) {
@@ -85,14 +85,32 @@ func Test_Perf_BC_Troughput_10_Nodes(t *testing.T) {
 	t.Run("10-node", getTest(10, 10, "2s", time.Second*10, time.Millisecond*7))
 }
 
+func Test_Perf_BC_Troughput_12_Nodes(t *testing.T) {
+	zerolog.SetGlobalLevel(zerolog.ErrorLevel)
+
+	t.Run("12-node", getTest(12, 10, "2s", time.Second*10, time.Millisecond*12))
+}
+
+func Test_Perf_BC_Troughput_14_Nodes(t *testing.T) {
+	zerolog.SetGlobalLevel(zerolog.ErrorLevel)
+
+	t.Run("14-node", getTest(14, 10, "2s", time.Second*10, time.Millisecond*16))
+}
+
 func Test_Perf_BC_Troughput_16_Nodes(t *testing.T) {
 	zerolog.SetGlobalLevel(zerolog.ErrorLevel)
 
 	t.Run("10-node", getTest(16, 10, "2s", time.Second*10, time.Microsecond*20500))
 }
 
+func Test_Perf_BC_Troughput_18_Nodes(t *testing.T) {
+	zerolog.SetGlobalLevel(zerolog.ErrorLevel)
+
+	t.Run("10-node", getTest(18, 10, "2s", time.Second*10, time.Microsecond*24500))
+}
+
 func Test_Perf_BC_Troughput_20_Nodes(t *testing.T) {
 	zerolog.SetGlobalLevel(zerolog.ErrorLevel)
 
-	t.Run("10-node", getTest(20, 10, "2s", time.Second*15, time.Millisecond*31))
+	t.Run("10-node", getTest(20, 10, "2s", time.Second*15, time.Microsecond*30500))
 }
