@@ -52,14 +52,13 @@ func (m *MPCModule) PreMPCTxnCallback(config *permissioned.ChainConfig, txn *per
 	}
 
 	// init MPC
-	fmt.Printf("BENCHMARK, Time: %d. In function: InitMPC start\n", time.Now().UnixNano())
+	fmt.Printf("BENCHMARK, Time: %d. In function: InitMPC\n", time.Now().UnixNano())
 	err = m.initMPCWithBlockchain(txn.ID, config, &propose)
 	m.mpcCenter.InformMPCStart(txn.ID)
 	if err != nil {
 		err = m.mpcCenter.InformMPCComplete(txn.ID, MPCResult{result: 0, err: err})
 		return err
 	}
-	fmt.Printf("BENCHMARK, Time: %d. In function: InitMPC end\n", time.Now().UnixNano())
 
 	// start MPC
 	val, err := m.ComputeExpression(txn.ID, propose.Expression, propose.Prime)
