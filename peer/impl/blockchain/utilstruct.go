@@ -11,6 +11,60 @@ import (
 )
 
 // -----------------------------------------------------------------------------
+// Next Block Info
+type NextBlkInfo struct {
+	Height uint
+	Miner  bool
+}
+
+// -----------------------------------------------------------------------------
+// BlkPool
+
+type BlkPool struct {
+	*sync.Mutex
+	*sync.Cond
+	queue []*permissioned.Block
+}
+
+func NewBlkPool() *BlkPool {
+	lock := sync.Mutex{}
+	return &BlkPool{
+		Mutex: &lock,
+		Cond:  sync.NewCond(&lock),
+		queue: make([]*permissioned.Block, 0),
+	}
+}
+
+func (p *BlkPool) Add(block *permissioned.Block) {
+	p.Lock()
+	defer p.Unlock()
+
+	p.queue = append(p.queue, block)
+	p.Broadcast()
+}
+
+func (p *BlkPool) Get(ctx context.Context) *permissioned.Block {
+	p.Lock()
+	defer p.Unlock()
+
+	for {
+		select {
+		case <-ctx.Done():
+			return nil
+		default:
+		}
+		if len(p.queue) > 0 {
+			break
+		}
+		p.Wait()
+	}
+
+	block := p.queue[0]
+	p.queue = p.queue[1:]
+	return block
+}
+
+// -----------------------------------------------------------------------------
 // TxnPool
 
 const POOL_CHAN_BUFFER_SIZE = 10

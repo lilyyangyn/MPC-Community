@@ -25,12 +25,13 @@ type BlockchainModule struct {
 
 	*permissioned.Blockchain
 	txnPool       *TxnPool
+	blkPool       *BlkPool
 	watchRegistry *WatchRegistry
 	cr            *CreditRecords
 
-	blkChan   chan *permissioned.Block
+	// blkChan   chan *permissioned.Block
 	readyCond sync.Cond
-	minerChan chan uint
+	minerChan chan NextBlkInfo
 }
 
 func NewBlockchainModule(conf *peer.Configuration, messageModule *message.MessageModule) *BlockchainModule {
@@ -40,11 +41,12 @@ func NewBlockchainModule(conf *peer.Configuration, messageModule *message.Messag
 
 		Blockchain:    permissioned.NewBlockchain(),
 		txnPool:       NewTxnPool(),
+		blkPool:       NewBlkPool(),
 		watchRegistry: NewWatchRegistry(),
 		cr:            NewCreditRecords(),
-		blkChan:       make(chan *permissioned.Block, 10),
-		readyCond:     *sync.NewCond(&sync.Mutex{}),
-		minerChan:     make(chan uint, 5),
+		// blkChan:       make(chan *permissioned.Block, 10),
+		readyCond: *sync.NewCond(&sync.Mutex{}),
+		minerChan: make(chan NextBlkInfo, 5),
 	}
 
 	// message registery
@@ -246,7 +248,8 @@ func (m *BlockchainModule) processBlk(block *permissioned.Block) error {
 	}
 
 	// Otherwise,append the block
-	m.blkChan <- block
+	// m.blkChan <- block
+	m.blkPool.Add(block)
 	return nil
 }
 
@@ -257,10 +260,9 @@ func (m *BlockchainModule) selectNextMiner(block *permissioned.Block) {
 	nextMiner := m.cr.advanceAndSelect(block)
 	log.Info().Msgf("Next miner on height %d is %s",
 		block.Height+1, nextMiner)
+
 	// notify miner to start if the next miner is myself
-	if nextMiner == m.wallet.GetAddress().Hex {
-		m.minerChan <- block.Height
-	}
+	m.minerChan <- NextBlkInfo{block.Height, nextMiner == m.wallet.GetAddress().Hex}
 }
 
 // getBlockTimeout returns the maxTimeout configured by chain config

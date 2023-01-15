@@ -20,19 +20,28 @@ out:
 		select {
 		case <-ctx.Done():
 			return
-		case prevHeight := <-m.minerChan:
+		case info := <-m.minerChan:
 			latestBlock := m.GetLatestBlock()
-			if prevHeight != latestBlock.Height {
-				log.Error().Msgf("miner mining on incoorect height. Expected: %d. Got: %d",
-					prevHeight, latestBlock.Height)
+			if latestBlock == nil {
 				continue
 			}
+			if info.Height != latestBlock.Height {
+				// 	// log.Error().Msgf("miner mining on incoorect height. Expected: %d. Got: %d",
+				// 	// 	prevHeight, latestBlock.Height)
+				continue out
+			}
+			prevHeight := latestBlock.Height
 
 			log.Info().Msgf("Mining on height=%d...", prevHeight+1)
 			newBlock := createBlock(ctx, txnPool,
 				m.wallet.GetAddress().Hex, latestBlock)
 			if newBlock == nil {
-				continue
+				continue out
+			}
+			if !info.Miner {
+				// put the transactions back to the pool
+				m.txnPool.PushBackSeveral(newBlock.Transactions)
+				continue out
 			}
 
 			// validate block
@@ -128,7 +137,12 @@ func (m *BlockchainModule) VerifyBlock(ctx context.Context) {
 		select {
 		case <-ctx.Done():
 			return
-		case block := <-m.blkChan:
+		default:
+			// block := <-m.blkChan:
+			block := m.blkPool.Get(ctx)
+			if block == nil {
+				continue
+			}
 			log.Info().Msgf("Verifying block %s on height=%d...",
 				block.Hash(), block.Height)
 

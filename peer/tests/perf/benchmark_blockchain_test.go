@@ -12,93 +12,87 @@ import (
 	"go.dedis.ch/cs438/transport/channel"
 )
 
-func Test_Perf_BC_Troughput(t *testing.T) {
-	zerolog.SetGlobalLevel(zerolog.WarnLevel)
-	getTest := func(n int, maxTxn int, blkTimeout string, repeat int) func(*testing.T) {
-		return func(t *testing.T) {
-			var sentNum float64 = 0
-			var commitNum float64 = 0
+var getTest = func(n int, maxTxn int, blkTimeout string, initSleepTime, sleepTime time.Duration) func(*testing.T) {
+	return func(t *testing.T) {
+		nodes, addrs := tests.Setup_n_peers_bc_perf(t, channel.NewTransport(), n, maxTxn, blkTimeout,
+			[]float64{10000}, initSleepTime, true, true)
+		fmt.Println("----------set up correctly----------")
+		nodeA := nodes[0]
+		addrA := addrs[0]
 
-			for i := 0; i < repeat; i++ {
+		total := 1000
 
-				nodes, addrs := tests.Setup_n_peers_bc_helper(t, channel.NewTransport(), n, maxTxn, blkTimeout,
-					[]float64{10000}, true, true)
-				fmt.Println("----------set up correctly----------")
-				nodeA := nodes[0]
-				addrA := addrs[0]
+		start := time.Now()
 
-				timeout := time.After(time.Second * 1)
-				var count float64 = 0
-			out:
-				for {
-					select {
-					case <-timeout:
-						break out
-					default:
-						count++
-						// fmt.Println(count)
-						err := nodeA.SetValueDBAsset("a", 1, float64(count))
-						if err != nil {
-							break out
-						}
-						time.Sleep(time.Microsecond * 400)
+		for j := 0; j < total; j++ {
+			err := nodeA.SetValueDBAsset("a", 1, float64(j+1))
+			require.NoError(t, err)
 
-					}
-				}
-
-				block := nodeA.BCGetLatestBlock()
-				record := permissioned.GetAssetsFromWorldState(block.States, addrA)
-				commit := record.Assets["a"]
-
-				sentNum += count
-				commitNum += commit
-
-				fmt.Printf("Round %d: Count= %f , Commit= %f \n", i, count, commit)
-
-				for _, node := range nodes {
-					node.Stop()
-				}
-				time.Sleep(time.Second * 2)
+			if j%50 == 0 {
+				fmt.Println("Round", j)
 			}
-
-			fmt.Printf("Result: Count=%f, Commit=%f\n", sentNum/float64(repeat), commitNum/float64(repeat))
+			time.Sleep(sleepTime)
 		}
-	}
 
-	t.Run("small group", getTest(3, 10, "2s", 5))
-	// t.Run("medium group", getTest(5, 10, "2s", 10))
-	// t.Run("large group", getTest(100, 10, "2s", 10))
-}
-
-func Test_Perf_BC_Troughput_2(t *testing.T) {
-	zerolog.SetGlobalLevel(zerolog.ErrorLevel)
-	getTest := func(n int, maxTxn int, blkTimeout string, repeat int) func(*testing.T) {
-		return func(t *testing.T) {
-			nodes, addrs := tests.Setup_n_peers_bc_helper(t, channel.NewTransport(), n, maxTxn, blkTimeout,
-				[]float64{10000}, true, true)
-			fmt.Println("----------set up correctly----------")
-			nodeA := nodes[0]
-			addrA := addrs[0]
-
-			start := time.Now()
-
-			for j := 0; j < 1000; j++ {
-				err := nodeA.SetValueDBAsset("a", 1, float64(j))
-				require.NoError(t, err)
-				time.Sleep(time.Microsecond * 400)
-			}
-
-			elapsed := time.Since(start)
-
+		for {
 			block := nodeA.BCGetLatestBlock()
 			record := permissioned.GetAssetsFromWorldState(block.States, addrA)
 			commit := record.Assets["a"]
 
-			fmt.Printf("Benchmark took %s. Sent: 1000, Commit: %f \n", elapsed, commit)
+			if commit == float64(total) {
+				break
+			}
 		}
-	}
+		elapsed := time.Since(start)
 
-	t.Run("small group", getTest(3, 10, "2s", 5))
-	// t.Run("medium group", getTest(5, 10, "2s", 10))
-	// t.Run("large group", getTest(100, 10, "2s", 10))
+		fmt.Printf("Benchmark took %s. Node: %d, Sent: %d \n", elapsed, n, total)
+	}
+}
+
+func Test_Perf_BC_Troughput_2_Nodes(t *testing.T) {
+	zerolog.SetGlobalLevel(zerolog.ErrorLevel)
+
+	t.Run("2-node", getTest(2, 10, "2s", time.Millisecond*500, time.Microsecond*100))
+}
+
+func Test_Perf_BC_Troughput_3_Nodes(t *testing.T) {
+	zerolog.SetGlobalLevel(zerolog.ErrorLevel)
+
+	t.Run("3-node", getTest(3, 10, "2s", time.Millisecond*500, time.Microsecond*450))
+}
+
+func Test_Perf_BC_Troughput_4_Nodes(t *testing.T) {
+	zerolog.SetGlobalLevel(zerolog.ErrorLevel)
+
+	t.Run("4-node", getTest(4, 10, "2s", time.Millisecond*800, time.Microsecond*650))
+}
+
+func Test_Perf_BC_Troughput_5_Nodes(t *testing.T) {
+	zerolog.SetGlobalLevel(zerolog.ErrorLevel)
+
+	t.Run("5-node", getTest(5, 10, "2s", time.Second*3, time.Microsecond*800))
+}
+
+func Test_Perf_BC_Troughput_8_Nodes(t *testing.T) {
+	zerolog.SetGlobalLevel(zerolog.ErrorLevel)
+
+	t.Run("5-node", getTest(8, 10, "2s", time.Second*7, time.Millisecond*3))
+}
+
+func Test_Perf_BC_Troughput_10_Nodes(t *testing.T) {
+	zerolog.SetGlobalLevel(zerolog.ErrorLevel)
+
+	t.Run("10-node", getTest(10, 10, "2s", time.Second*10, time.Millisecond*7))
+}
+
+func Test_Perf_BC_Troughput_16_Nodes(t *testing.T) {
+	zerolog.SetGlobalLevel(zerolog.ErrorLevel)
+
+	t.Run("10-node", getTest(16, 10, "2s", time.Second*10, time.Microsecond*20500))
+}
+
+func Test_Perf_BC_Troughput_20_Nodes(t *testing.T) {
+	zerolog.SetGlobalLevel(zerolog.ErrorLevel)
+
+	t.Run("10-node", getTest(20, 10, "2s", time.Second*10, time.Millisecond*30))
 }
