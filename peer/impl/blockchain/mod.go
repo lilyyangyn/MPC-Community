@@ -176,6 +176,7 @@ func (m *BlockchainModule) RegisterTxnCallabck(txnType permissioned.TxnType, wat
 
 // SendPreMPCTransaction generates and sends a preMPC transaction
 func (m *BlockchainModule) SendPreMPCTransaction(expression string, budget float64, prime string) (string, error) {
+	fmt.Printf("BENCHMARK, Time: %d. In function: SendPreMPCTransaction\n", time.Now().UnixNano())
 	signedTxn, err := m.wallet.PreMPCTxn(expression, budget, prime)
 	if err != nil {
 		return "", err
@@ -185,6 +186,7 @@ func (m *BlockchainModule) SendPreMPCTransaction(expression string, budget float
 
 // SendPostMPCTransaction generates and sends a postMPC transaction
 func (m *BlockchainModule) SendPostMPCTransaction(id string, result float64) (string, error) {
+	fmt.Printf("BENCHMARK, Time: %d. In function: SendPostMPCTransaction\n", time.Now().UnixNano())
 	signedTxn, err := m.wallet.PostMPCTxn(id, result)
 	if err != nil {
 		return "", err

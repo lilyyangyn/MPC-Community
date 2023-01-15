@@ -8,6 +8,7 @@ import (
 	"regexp"
 	"sort"
 	"strings"
+	"time"
 
 	"go.dedis.ch/cs438/storage"
 )
@@ -130,6 +131,7 @@ func GetAllAssetsFromWorldState(worldState storage.KVStore) map[string]map[strin
 
 func GetPostfixAndVariables(expr string) ([]string, map[string]struct{}, error) {
 	// change infix to postfix
+	fmt.Printf("BENCHMARK, Time: %d. In function: GetPostfixAndVariables start\n", time.Now().UnixNano())
 	postfix, err := infixToPostfix(expr)
 	if err != nil {
 		return []string{}, map[string]struct{}{}, err
@@ -142,6 +144,7 @@ func GetPostfixAndVariables(expr string) ([]string, map[string]struct{}, error) 
 			variablesNeed[exp] = struct{}{}
 		}
 	}
+	fmt.Printf("BENCHMARK, Time: %d. In function: GetPostfixAndVariables end\n", time.Now().UnixNano())
 	return postfix, variablesNeed, nil
 }
 

@@ -490,6 +490,70 @@ func Test_GP_ComputeExpression_Complex_2(t *testing.T) {
 	}
 }
 
+func Test_GP_ComputeExpression_StressTest(t *testing.T) {
+	dummy_assets := []string{"a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m", "n", "o", "p", "q", "r", "s", "t", "u", "v", "w", "x", "y", "z"}
+	n := 10
+	nodes := setup_n_peers(n, t)
+	for i := 0; i < n; i++ {
+		defer nodes[i].Stop()
+	}
+
+	// node set asset
+	assets := make([]string, n)
+	values := make([]int, n)
+	for i := 0; i < n; i++ {
+		assets[i] = dummy_assets[i]
+		values[i] = i + 1
+	}
+
+	for i := 0; i < n; i++ {
+		err := nodes[i].SetValueDBAsset(assets[i], values[i], 0)
+		require.NoError(t, err)
+	}
+
+	// all node will need to run compute Expression simultaneously.
+	prime := "1000000009"
+	uniqID := "test"
+	expression := assets[0]
+	for i := 1; i < n; i++ {
+		expression += "+"
+		expression += assets[i]
+	}
+
+	// init the information for all nodes
+	for i := 0; i < n; i++ {
+		err := nodes[i].InitMPC(uniqID, prime, nodes[i].GetAddr(), expression)
+		require.NoError(t, err)
+	}
+
+	ans := make([]int, n)
+	for i := 0; i < n; i++ {
+		ii := i
+		go func() {
+			mpcAns, err := nodes[ii].ComputeExpression(uniqID, expression, prime)
+			ans[ii] = mpcAns
+			require.NoError(t, err)
+		}()
+	}
+
+	time.Sleep(time.Second * 1)
+
+	// check all received ans is equal
+	recvValue := ans[0]
+	for i := 0; i < n; i++ {
+		require.Equal(t, recvValue, ans[i])
+	}
+
+	// check equal to the expected ans
+	expectedAns := 0
+	for i := 0; i < n; i++ {
+		expectedAns += i + 1
+	}
+	for i := 0; i < n; i++ {
+		require.Equal(t, int(expectedAns), ans[i])
+	}
+}
+
 func Test_GP_ComputeExpression_Multiple_Time(t *testing.T) {
 	nodes := setup_n_peers(3, t)
 	nodeA := nodes[0]

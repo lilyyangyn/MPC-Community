@@ -24,6 +24,7 @@ func newMPCModuleWithBlockchain(conf *peer.Configuration, messageModule *message
 
 	// register txn callback
 	bcModule.RegisterTxnCallabck(permissioned.TxnTypePreMPC, m.PreMPCTxnCallback)
+	bcModule.RegisterTxnCallabck(permissioned.TxnTypePostMPC, m.PostMPCTxnCallback)
 
 	return m
 }
