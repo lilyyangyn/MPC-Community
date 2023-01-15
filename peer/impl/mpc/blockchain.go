@@ -3,14 +3,13 @@ package mpc
 import (
 	"fmt"
 	"math/big"
-	"time"
 
 	"github.com/rs/zerolog/log"
 	"go.dedis.ch/cs438/permissioned-chain"
 )
 
 func (m *MPCModule) PostMPCTxnCallback(config *permissioned.ChainConfig, txn *permissioned.Transaction) error {
-	fmt.Printf("BENCHMARK, Time: %d. In function: PostMPCTxnCallback\n", time.Now().UnixNano())
+	// fmt.Printf("BENCHMARK, Time: %d. In function: PostMPCTxnCallback\n", time.Now().UnixNano())
 	if txn.Type != permissioned.TxnTypePostMPC {
 		return fmt.Errorf("invalid txn type. Expected: %s. Got: %s", permissioned.TxnTypePostMPC, txn.Type)
 	}
@@ -18,7 +17,7 @@ func (m *MPCModule) PostMPCTxnCallback(config *permissioned.ChainConfig, txn *pe
 }
 
 func (m *MPCModule) PreMPCTxnCallback(config *permissioned.ChainConfig, txn *permissioned.Transaction) error {
-	fmt.Printf("BENCHMARK, Time: %d. In function: PreMPCTxnCallback Start\n", time.Now().UnixNano())
+	// fmt.Printf("BENCHMARK, Time: %d. In function: PreMPCTxnCallback Start\n", time.Now().UnixNano())
 	if txn.Type != permissioned.TxnTypePreMPC {
 		return fmt.Errorf("invalid txn type. Expected: %s. Got: %s",
 			permissioned.TxnTypePreMPC, txn.Type)
@@ -52,7 +51,7 @@ func (m *MPCModule) PreMPCTxnCallback(config *permissioned.ChainConfig, txn *per
 	}
 
 	// init MPC
-	fmt.Printf("BENCHMARK, Time: %d. In function: InitMPC\n", time.Now().UnixNano())
+	// fmt.Printf("BENCHMARK, Time: %d. In function: InitMPC\n", time.Now().UnixNano())
 	err = m.initMPCWithBlockchain(txn.ID, config, &propose)
 	m.mpcCenter.InformMPCStart(txn.ID)
 	if err != nil {
@@ -77,7 +76,7 @@ func (m *MPCModule) PreMPCTxnCallback(config *permissioned.ChainConfig, txn *per
 	} else {
 		log.Info().Msgf("send postMPC txn %s for MPC %s", postID, txn.ID)
 	}
-	fmt.Printf("BENCHMARK, Time: %d. In function: PreMPCTxnCallback end\n", time.Now().UnixNano())
+	// fmt.Printf("BENCHMARK, Time: %d. In function: PreMPCTxnCallback end\n", time.Now().UnixNano())
 
 	return nil
 }
