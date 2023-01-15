@@ -146,27 +146,28 @@ func (m *BlockchainModule) VerifyBlock(ctx context.Context) {
 			log.Info().Msgf("Verifying block %s on height=%d...",
 				block.Hash(), block.Height)
 
-			// validate consensus
-			expectedMiner := m.cr.getLatestMiner()
-			if expectedMiner != block.Miner {
-				log.Error().Msgf("invalid miner. Expected: %s. Got: %s",
-					expectedMiner, block.Miner)
-				continue
-			}
-
 			result := m.CheckBlockHeight(block)
 			if result == permissioned.BlockCompareAdvance ||
 				result == permissioned.BlockCompareNotInitialize {
 				// block too advance. Syncing
 				log.Info().Msgf("receive advance block on height %d. Syncing...", block.Height)
-				err := m.sync(block.Miner)
-				if err != nil {
-					log.Err(err).Send()
-				}
+				// err := m.sync(block.Miner)
+				// if err != nil {
+				// 	log.Err(err).Send()
+				// }
+				m.blkPool.Add(block)
 				continue
 			} else if result != permissioned.BlockCompareMatched {
 				log.Error().Msgf("block %s is invalid. Error code: %d",
 					block.Hash(), result)
+				continue
+			}
+
+			// validate consensus
+			expectedMiner := m.cr.getLatestMiner()
+			if expectedMiner != block.Miner {
+				log.Error().Msgf("invalid miner. Expected: %s. Got: %s",
+					expectedMiner, block.Miner)
 				continue
 			}
 

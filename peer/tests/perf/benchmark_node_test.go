@@ -22,6 +22,7 @@ import (
 func setup(t *testing.T, n int, maxTxn int,
 	timeout string, gains []float64, initSleepTime time.Duration) ([]*z.TestNode, []string) {
 	return tests.Setup_n_peers_bc_perf(t, channel.NewTransport(), n, maxTxn, timeout, []float64{10000}, initSleepTime, false, true)
+	// return tests.Setup_n_peers_bc(t, n, maxTxn, timeout, gains, false, true)
 }
 
 // addition tests
@@ -121,7 +122,7 @@ func Test_Throughput_Simple_Add_4_nodes(t *testing.T) {
 			//timer(start, "MPC")
 
 			// try to minimize
-			time.Sleep(time.Millisecond * 50)
+			time.Sleep(time.Millisecond * 30)
 			//time.Sleep(time.Second * 3)
 		}
 		timer(overall, "overall execution")
@@ -140,7 +141,7 @@ func Test_Throughput_Simple_Add_4_nodes(t *testing.T) {
 
 func Test_Throughput_Simple_Add_5_nodes(t *testing.T) {
 	zerolog.SetGlobalLevel(zerolog.ErrorLevel)
-	//zerolog.SetGlobalLevel(zerolog.WarnLevel)
+	// zerolog.SetGlobalLevel(zerolog.InfoLevel)
 
 	const iniBalanceA = 300
 	nodes, _ := setup(t, 5, 1, "10s", []float64{float64(iniBalanceA)}, time.Second*3)
@@ -179,7 +180,7 @@ func Test_Throughput_Simple_Add_5_nodes(t *testing.T) {
 
 			// try to minimize
 			//time.Sleep(time.Millisecond * 500)
-			time.Sleep(time.Second * 3)
+			time.Sleep(time.Millisecond * 80)
 		}
 		timer(overall, "overall execution")
 
@@ -290,7 +291,7 @@ func Test_Throughput_Simple_Mul_4_nodes(t *testing.T) {
 			require.NoError(t, err)
 
 			// try to minimize
-			time.Sleep(time.Millisecond * 30)
+			time.Sleep(time.Millisecond * 40)
 			//time.Sleep(time.Second * 3)
 
 			timer(start, "MPC")
@@ -349,7 +350,7 @@ func Test_Throughput_Simple_Mul_5_nodes(t *testing.T) {
 			require.NoError(t, err)
 
 			// try to minimize
-			time.Sleep(time.Millisecond * 30)
+			time.Sleep(time.Millisecond * 80)
 			//time.Sleep(time.Second * 3)
 
 			timer(start, "MPC")
@@ -409,7 +410,7 @@ func Test_Throughput_Complex_3_nodes(t *testing.T) {
 			require.NoError(t, err)
 
 			// try to minimize
-			time.Sleep(time.Millisecond * 600)
+			time.Sleep(time.Millisecond * 50)
 			//time.Sleep(time.Second * 1)
 
 			timer(start, "MPC")
@@ -529,7 +530,7 @@ func Test_Throughput_maxTxn_3_nodes(t *testing.T) {
 			require.NoError(t, err)
 
 			// try to minimize
-			time.Sleep(time.Millisecond * 10)
+			time.Sleep(time.Millisecond)
 			//time.Sleep(time.Second * 3)
 
 			//timer(start, "MPC")

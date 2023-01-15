@@ -35,11 +35,26 @@ func NewBlkPool() *BlkPool {
 	}
 }
 
+func (p *BlkPool) sortedInsert(block *permissioned.Block) {
+	i := sort.Search(len(p.queue), func(i int) bool {
+		return p.queue[i].Height > block.Height
+	})
+	if i == len(p.queue) {
+		// Insert at end is the easy case.
+		p.queue = append(p.queue, block)
+	} else {
+		// Make space for the inserted element by shifting values
+		p.queue = append(p.queue[:i+1], p.queue[i:]...)
+		// Insert the new element.
+		p.queue[i] = block
+	}
+}
+
 func (p *BlkPool) Add(block *permissioned.Block) {
 	p.Lock()
 	defer p.Unlock()
 
-	p.queue = append(p.queue, block)
+	p.sortedInsert(block)
 	p.Broadcast()
 }
 
@@ -260,6 +275,9 @@ func NewWallet(privkey *ecdsa.PrivateKey) *Wallet {
 
 func (w *Wallet) GetAddress() permissioned.Address {
 	// Assume addr never change
+	if w.addr == nil {
+		panic("blockchain address not set")
+	}
 	return *w.addr
 }
 

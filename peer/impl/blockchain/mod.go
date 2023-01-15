@@ -356,7 +356,16 @@ func (m *BlockchainModule) sendBCAskSyncMessage(id string,
 		return err
 	}
 
-	return m.Unicast(to, askMsgMarshal)
+	// wrap in private msg
+	privMsg := types.BCPrivateMessage{
+		Recipients: map[string]struct{}{to: {}},
+		Msg:        &askMsgMarshal,
+	}
+	privMsgMarshal, err := m.CreateMsg(privMsg)
+	if err != nil {
+		return err
+	}
+	return m.Broadcast(privMsgMarshal)
 }
 
 // sendBCSyncMessage sends a BCSyncMessage in private msg
@@ -372,5 +381,15 @@ func (m *BlockchainModule) sendBCSyncMessage(id string,
 		return err
 	}
 
-	return m.Unicast(to, syncMsgMarshal)
+	// wrap in private msg
+	privMsg := types.BCPrivateMessage{
+		Recipients: map[string]struct{}{to: {}},
+		Msg:        &syncMsgMarshal,
+	}
+	privMsgMarshal, err := m.CreateMsg(privMsg)
+	if err != nil {
+		return err
+	}
+
+	return m.Broadcast(privMsgMarshal)
 }
