@@ -2,22 +2,24 @@ import matplotlib.pyplot as plt
 import numpy as np
 
 def simple_txn_throughput(save):
-    raw_sent = [[1261, 1268, 1268, 1264, 1261, 1271, 1261, 1273]]
-    raw_commit = [[1260, 1260, 1260, 1260, 1260, 1270, 1260, 1270]]
-    y_sent = np.array(raw_sent)
-    y_commit = np.array(raw_commit)
-    x_data = [3, 5]
+    x_data = [2, 4, 6, 8, 10, 12, 14, 16, 18, 20]
+    raw_data = [510.143212, 1197.252827, 1600.888948, 
+                4145.237745, 8074.317746, 12548.058258, 
+                17215.797999, 21148.166825, 25463.041297, 
+                32479.116068]
+    y_data = [raw/1000 for raw in raw_data]
 
-    plt.bar(x_data, y_sent, label="Total Txn Sent")
-    plt.bar(x_data, y_commit, label="Total Txn Committed")
+    plt.plot(x_data, y_data, marker='o', label="Avg transaction commit time in blockchain")
+    plt.xlim([0, 22])
+    plt.xticks(x_data)
+    # plt.ylim(0)
+    plt.xlabel('Number of nodes')
+    plt.ylabel('Avg time per transaction (ms)')
+    plt.title("Avg transaction commit time in blockchain")
+    plt.grid()
 
-    plt.xlim([0, 100])
-    plt.ylim(0)
-    plt.xlabel('Percentage of Data Loss')
-    plt.ylabel('Average Download Parity Blocks Ratio')
-    plt.title("Part of Data Missing and All Parity Present")
     if save is False:
         plt.show()
     else:
-        plt.savefig('results/only_data_download_overhead.png', bbox_inches='tight')
+        plt.savefig('../results/bc_txn_time.pdf', bbox_inches='tight')
         plt.clf()
