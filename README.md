@@ -10,7 +10,7 @@ The system is constituted by three main components: Message module, Permissioned
 The full process of a paid MPC goes like the following. It contains three stages: PreMPC, MPC, and PostMPC. Both PreMPC and PostMPC involves Blockchain interactions, while MPC is the where the true MPC goes on.
 ![mpc-proccess](/docs/mpc-process.png)
 
-For more information, please refer to the report and [slides](/docs/slides.pdf).
+For more information, please refer to the [report](/docs/report.pdf) and [slides](/docs/slides.pdf).
 
 ## Quick setup
 
