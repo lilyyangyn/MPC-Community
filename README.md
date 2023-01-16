@@ -1,6 +1,6 @@
 # MPC Community
 
-A p2p community with access control, where participants can start MPCs, sell data for MPC to use without worried about leackage, participate in MPC to earn fees, etc.
+A p2p community with access control, where participants can start MPCs, sell data for MPC to use without worrying about leakage, participate in MPC to earn fees, etc.
 
 ## System Architecture
 
