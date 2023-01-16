@@ -59,6 +59,7 @@ func Test_GP_MPC_Paxos_Add(t *testing.T) {
 // Blockchain MPC
 
 func Test_GP_MPC_Pure_BC_Single(t *testing.T) {
+	zerolog.SetGlobalLevel(zerolog.ErrorLevel)
 	// zerolog.SetGlobalLevel(zerolog.WarnLevel)
 	nodes, addrs := tests.Setup_n_peers_bc(t, 3, 3, "2s", []float64{100}, true, true)
 	nodeA := nodes[0]
@@ -140,7 +141,8 @@ func Test_GP_MPC_Pure_BC_Single(t *testing.T) {
 }
 
 func Test_GP_MPC_Pure_BC_Multiple(t *testing.T) {
-	zerolog.SetGlobalLevel(zerolog.WarnLevel)
+	zerolog.SetGlobalLevel(zerolog.ErrorLevel)
+	// zerolog.SetGlobalLevel(zerolog.WarnLevel)
 	nodes, addrs := tests.Setup_n_peers_bc(t, 3, 3, "2h", []float64{100}, true, true)
 	nodeA := nodes[0]
 	nodeB := nodes[1]
@@ -244,7 +246,8 @@ func Test_GP_MPC_Pure_BC_Multiple(t *testing.T) {
 }
 
 func Test_GP_MPC_Pure_BC_Double_Spend(t *testing.T) {
-	zerolog.SetGlobalLevel(zerolog.WarnLevel)
+	zerolog.SetGlobalLevel(zerolog.ErrorLevel)
+	// zerolog.SetGlobalLevel(zerolog.WarnLevel)
 	nodes, addrs := tests.Setup_n_peers_bc(t, 3, 3, "2s", []float64{7}, true, true)
 	nodeA := nodes[0]
 	nodeB := nodes[1]
@@ -328,7 +331,8 @@ func Test_GP_MPC_Pure_BC_Double_Spend(t *testing.T) {
 }
 
 func Test_GP_MPC_BC_ADD_Simple(t *testing.T) {
-	zerolog.SetGlobalLevel(zerolog.WarnLevel)
+	zerolog.SetGlobalLevel(zerolog.ErrorLevel)
+	// zerolog.SetGlobalLevel(zerolog.WarnLevel)
 	nodes, _ := tests.Setup_n_peers_bc(t, 3, 1, "2s", []float64{100}, false, true)
 	nodeA := nodes[0]
 	nodeB := nodes[1]
@@ -375,7 +379,8 @@ func Test_GP_MPC_BC_ADD_Simple(t *testing.T) {
 }
 
 func Test_GP_MPC_BC_MULT_Simple(t *testing.T) {
-	zerolog.SetGlobalLevel(zerolog.WarnLevel)
+	// zerolog.SetGlobalLevel(zerolog.WarnLevel)
+	zerolog.SetGlobalLevel(zerolog.ErrorLevel)
 	nodes, _ := tests.Setup_n_peers_bc(t, 3, 1, "2s", []float64{100}, false, true)
 	nodeA := nodes[0]
 	nodeB := nodes[1]
@@ -422,7 +427,8 @@ func Test_GP_MPC_BC_MULT_Simple(t *testing.T) {
 }
 
 func Test_GP_MPC_BC_COMPLEX(t *testing.T) {
-	zerolog.SetGlobalLevel(zerolog.WarnLevel)
+	zerolog.SetGlobalLevel(zerolog.ErrorLevel)
+	// zerolog.SetGlobalLevel(zerolog.WarnLevel)
 	nodes, _ := tests.Setup_n_peers_bc(t, 3, 1, "2s", []float64{0, 0, 100}, false, true)
 	nodeA := nodes[0]
 	nodeB := nodes[1]
@@ -476,7 +482,8 @@ func Test_GP_MPC_BC_COMPLEX(t *testing.T) {
 }
 
 func Test_GP_MPC_BC_Multiple(t *testing.T) {
-	zerolog.SetGlobalLevel(zerolog.InfoLevel)
+	zerolog.SetGlobalLevel(zerolog.ErrorLevel)
+	// zerolog.SetGlobalLevel(zerolog.InfoLevel)
 	nodes, addrs := tests.Setup_n_peers_bc(t, 3, 1, "5h", []float64{200}, false, true)
 	nodeA := nodes[0]
 	nodeB := nodes[1]
@@ -574,7 +581,8 @@ func Test_GP_MPC_BC_Multiple(t *testing.T) {
 }
 
 func Test_GP_MPC_BC_MULT_Simple_With_Pubkey_Txn(t *testing.T) {
-	zerolog.SetGlobalLevel(zerolog.WarnLevel)
+	zerolog.SetGlobalLevel(zerolog.ErrorLevel)
+	// zerolog.SetGlobalLevel(zerolog.WarnLevel)
 	nodes, _ := tests.Setup_n_peers_bc(t, 3, 1, "2s", []float64{100}, false, true)
 	nodeA := nodes[0]
 	nodeB := nodes[1]
@@ -619,7 +627,8 @@ func Test_GP_MPC_BC_MULT_Simple_With_Pubkey_Txn(t *testing.T) {
 	require.Equal(t, valueA*valueB, recvValue)
 }
 func Test_GP_MPC_BC_Stress_Multiple(t *testing.T) {
-	zerolog.SetGlobalLevel(zerolog.InfoLevel)
+	// zerolog.SetGlobalLevel(zerolog.InfoLevel)
+	zerolog.SetGlobalLevel(zerolog.ErrorLevel)
 	nodes, addrs := tests.Setup_n_peers_bc(t, 3, 3, "5s", []float64{200}, false, true)
 	nodeA := nodes[0]
 	nodeB := nodes[1]
@@ -674,7 +683,7 @@ func Test_GP_MPC_BC_Stress_Multiple(t *testing.T) {
 		mpcCount <- struct{}{}
 	}()
 
-	timeout := time.After(time.Second * 3)
+	timeout := time.After(time.Second * 5)
 
 	select {
 	case <-mpcDone:

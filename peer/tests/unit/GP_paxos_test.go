@@ -9,6 +9,7 @@ import (
 	"testing"
 	"time"
 
+	"github.com/rs/zerolog"
 	"github.com/stretchr/testify/require"
 	z "go.dedis.ch/cs438/internal/testing"
 	"go.dedis.ch/cs438/storage"
@@ -20,6 +21,7 @@ import (
 // Check that a peer does nothing if it receives a prepare message with a wrong
 // step.
 func Test_GP_Paxos_Acceptor_Prepare_Wrong_Step(t *testing.T) {
+	zerolog.SetGlobalLevel(zerolog.ErrorLevel)
 	transp := channel.NewTransport()
 
 	acceptor := z.NewTestNode(t, peerFac, transp, "127.0.0.1:0", z.WithTotalPeers(1),
@@ -64,6 +66,7 @@ func Test_GP_Paxos_Acceptor_Prepare_Wrong_Step(t *testing.T) {
 // Check that a peer does nothing if it receives a prepare message with a wrong
 // ID.
 func Test_GP_Paxos_Acceptor_Prepare_Wrong_ID(t *testing.T) {
+	zerolog.SetGlobalLevel(zerolog.ErrorLevel)
 	transp := channel.NewTransport()
 
 	acceptor := z.NewTestNode(t, peerFac, transp, "127.0.0.1:0", z.WithTotalPeers(1),
@@ -108,6 +111,7 @@ func Test_GP_Paxos_Acceptor_Prepare_Wrong_ID(t *testing.T) {
 // Check that a peer sends back a promise if it receives a valid prepare
 // message.
 func Test_GP_Paxos_Acceptor_Prepare_Correct(t *testing.T) {
+	zerolog.SetGlobalLevel(zerolog.ErrorLevel)
 	transp := channel.NewTransport()
 
 	acceptor := z.NewTestNode(t, peerFac, transp, "127.0.0.1:0", z.WithTotalPeers(1),
@@ -171,6 +175,7 @@ func Test_GP_Paxos_Acceptor_Prepare_Correct(t *testing.T) {
 // Check that a peer does nothing if it receives a propose message with a wrong
 // step.
 func Test_GP_Paxos_Acceptor_Propose_Wrong_Step(t *testing.T) {
+	zerolog.SetGlobalLevel(zerolog.ErrorLevel)
 	transp := channel.NewTransport()
 
 	acceptor := z.NewTestNode(t, peerFac, transp, "127.0.0.1:0", z.WithTotalPeers(1),
@@ -224,6 +229,7 @@ func Test_GP_Paxos_Acceptor_Propose_Wrong_Step(t *testing.T) {
 // Check that a peer does nothing if it receives a propose message with a wrong
 // ID.
 func Test_GP_Paxos_Acceptor_Propose_Wrong_ID(t *testing.T) {
+	zerolog.SetGlobalLevel(zerolog.ErrorLevel)
 	transp := channel.NewTransport()
 
 	acceptor := z.NewTestNode(t, peerFac, transp, "127.0.0.1:0", z.WithTotalPeers(1),
@@ -279,6 +285,7 @@ func Test_GP_Paxos_Acceptor_Propose_Wrong_ID(t *testing.T) {
 // Check that if an acceptor already promised, but receives a higher ID, then it
 // must return the valid promised id and promised value.
 func Test_GP_Paxos_Acceptor_Prepare_Already_Promised(t *testing.T) {
+	zerolog.SetGlobalLevel(zerolog.ErrorLevel)
 	transp := channel.NewTransport()
 
 	acceptor := z.NewTestNode(t, peerFac, transp, "127.0.0.1:0", z.WithTotalPeers(2),
@@ -416,6 +423,7 @@ func Test_GP_Paxos_Acceptor_Prepare_Already_Promised(t *testing.T) {
 // Check that a peer broadcast an accept if it receives a propose message with a
 // correct ID and correct Step.
 func Test_GP_Paxos_Acceptor_Propose_Correct(t *testing.T) {
+	zerolog.SetGlobalLevel(zerolog.ErrorLevel)
 	transp := channel.NewTransport()
 
 	acceptor := z.NewTestNode(t, peerFac, transp, "127.0.0.1:0", z.WithTotalPeers(1),
@@ -484,6 +492,7 @@ func Test_GP_Paxos_Acceptor_Propose_Correct(t *testing.T) {
 
 // Check that a peer does nothing if it receives a promise with a wrong step.
 func Test_GP_Paxos_Proposer_Prepare_Promise_Wrong_Step(t *testing.T) {
+	zerolog.SetGlobalLevel(zerolog.ErrorLevel)
 	transp := channel.NewTransport()
 
 	paxosID := uint(9)
@@ -563,6 +572,7 @@ func Test_GP_Paxos_Proposer_Prepare_Promise_Wrong_Step(t *testing.T) {
 
 // Check that a peer broadcast a propose when it gets enough promises.
 func Test_GP_Paxos_Proposer_Prepare_Propose_Correct(t *testing.T) {
+	zerolog.SetGlobalLevel(zerolog.ErrorLevel)
 	transp := channel.NewTransport()
 
 	paxosID := uint(9)
@@ -656,6 +666,7 @@ func Test_GP_Paxos_Proposer_Prepare_Propose_Correct(t *testing.T) {
 // i.e. it will do nothing if the promise messages are from a Tag paxos even the number
 // of promises it received reaches the threshold
 func Test_GP_Paxos_Proposer_Prepare_Propose_Wrong_Type(t *testing.T) {
+	zerolog.SetGlobalLevel(zerolog.ErrorLevel)
 	transp := channel.NewTransport()
 
 	paxosID := uint(9)
@@ -736,6 +747,7 @@ func Test_GP_Paxos_Proposer_Prepare_Propose_Wrong_Type(t *testing.T) {
 
 // If a peer doesn't receives enough TLC message it must not add a new block.
 func Test_GP_TLC_Move_Step_Not_Enough(t *testing.T) {
+	zerolog.SetGlobalLevel(zerolog.ErrorLevel)
 	transp := channel.NewTransport()
 
 	// Threshold = 2
@@ -817,6 +829,7 @@ func Test_GP_TLC_Move_Step_Not_Enough(t *testing.T) {
 // If a peer receives enough TLC message it must then add a new block, and
 // broadcast a TLC message (if not already done).
 func Test_GP_TLC_Move_Step_OK(t *testing.T) {
+	zerolog.SetGlobalLevel(zerolog.ErrorLevel)
 	transp := channel.NewTransport()
 
 	// Threshold = 2
@@ -913,6 +926,7 @@ func Test_GP_TLC_Move_Step_OK(t *testing.T) {
 //	A -> B: TLC (broadcast)
 //	B -> A: TLC (broadcast)
 func Test_GP_MPC_Paxos_Simple_Consensus(t *testing.T) {
+	zerolog.SetGlobalLevel(zerolog.ErrorLevel)
 	transp := channel.NewTransport()
 
 	node1 := z.NewTestNode(t, peerFac, transp, "127.0.0.1:0", z.WithTotalPeers(2), z.WithPaxosID(1),
@@ -1175,6 +1189,7 @@ func Test_GP_MPC_Paxos_Simple_Consensus(t *testing.T) {
 // seconds, and the PaxosProposerRetry is set to 4 seconds, then the proposer
 // must have retried once and sent in total 2 paxos prepare.
 func Test_GP_MPC_Paxos_No_Consensus(t *testing.T) {
+	zerolog.SetGlobalLevel(zerolog.ErrorLevel)
 	transp := channel.NewTransport()
 
 	threshold := func(i uint) int { return int(i) }
@@ -1249,6 +1264,7 @@ func Test_GP_MPC_Paxos_No_Consensus(t *testing.T) {
 // third node and a consensus should eventually be reached and name stores
 // updated.
 func Test_GP_MPC_Paxos_Eventual_Consensus(t *testing.T) {
+	zerolog.SetGlobalLevel(zerolog.ErrorLevel)
 	transp := channel.NewTransport()
 
 	// Note: we are setting the antientropy on each peer to make sure all rumors
@@ -1334,6 +1350,7 @@ func Test_GP_MPC_Paxos_Eventual_Consensus(t *testing.T) {
 // Call the Calculate() function on multiple peers concurrently. The state should be
 // consistent for all peers.
 func Test_GP_MPC_Paxos_Consensus_Stress_Test(t *testing.T) {
+	zerolog.SetGlobalLevel(zerolog.ErrorLevel)
 	numMessages := 7
 	numNodes := 3
 

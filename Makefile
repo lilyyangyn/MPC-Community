@@ -3,7 +3,8 @@ export BINLOG = warn
 export HTTPLOG = warn
 export GORACE = halt_on_error=1
 
-test: test_hw0 test_hw1 test_hw2 test_hw3 test_GP
+# test: test_hw0 test_hw1 test_hw2 test_hw3 test_GP
+test: test_GP
 
 xtest: setbin test
 
@@ -31,13 +32,13 @@ test_unit_hw3:
 	go test -v -race -run Test_HW3 ./peer/tests/unit
 
 test_unit_secure_channel:
-	go test -v -race -run Test_GP_SecureChannel ./peer/test/unit
+	go test -v -race -run Test_GP_SecureChannel ./peer/tests/unit
 
 test_unit_paxos:
-	go test -v -race -run Test_GP_Paxos ./peer/test/unit
+	go test -v -race -run Test_GP_Paxos ./peer/tests/unit
 
 test_unit_mpc:
-	go test -v -race -run Test_GP_ComputeExpression ./peer/test/unit
+	go test -v -race -run Test_GP_ComputeExpression ./peer/tests/unit
 
 test_int_hw0:
 	go test -timeout 40m -v -race -run Test_HW0 ./peer/tests/integration

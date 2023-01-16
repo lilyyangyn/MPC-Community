@@ -6,6 +6,7 @@ import (
 
 	"encoding/json"
 
+	"github.com/rs/zerolog"
 	"github.com/stretchr/testify/require"
 	z "go.dedis.ch/cs438/internal/testing"
 	"go.dedis.ch/cs438/transport"
@@ -15,6 +16,7 @@ import (
 )
 
 func Test_GP_SecureChannel_Encryption_Send(t *testing.T) {
+	zerolog.SetGlobalLevel(zerolog.ErrorLevel)
 	transp := channel.NewTransport()
 
 	fake := z.NewFakeMessage(t)
@@ -45,6 +47,7 @@ func Test_GP_SecureChannel_Encryption_Send(t *testing.T) {
 }
 
 func Test_GP_SecureChannel_Pubkey_Handler(t *testing.T) {
+	zerolog.SetGlobalLevel(zerolog.ErrorLevel)
 	transp := channel.NewTransport()
 
 	node1 := z.NewTestNode(t, peerFac, transp, "127.0.0.1:0")
@@ -92,6 +95,7 @@ func Test_GP_SecureChannel_Pubkey_Handler(t *testing.T) {
 }
 
 func Test_GP_SecureChannel_Pubkey_Distribution(t *testing.T) {
+	zerolog.SetGlobalLevel(zerolog.ErrorLevel)
 	getTest := func(transp transport.Transport) func(*testing.T) {
 		return func(t *testing.T) {
 			opts := []z.Option{
