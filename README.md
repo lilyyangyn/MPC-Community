@@ -5,12 +5,12 @@ A p2p community with access control, where participants can start MPCs, sell dat
 ## System Architecture
 
 The system is constituted by three main components: Message module, Permissioned Blockchain module, and MPC module. Modules communicate with each other internally and all connections to the outside wolrd goes through Message module.
+![system-arch](/docs/system-arch.png)
 
-![system-arch](https://github.com/lilyyangyn/peerster/blob/master/docs/system-arch.png)
+The full process of a paid MPC goes like the following. It contains three stages: PreMPC, MPC, and PostMPC. Both PreMPC and PostMPC involves Blockchain interactions, while MPC is the where the true MPC goes on.
+![mpc-proccess](/docs/mpc-process.png)
 
-The full process of a paid MPC goes like the following. It contains three stages: PreMPC, MPC, and PostMPC. 
-
-![mpc-proccess](https://github.com/lilyyangyn/peerster/blob/master/docs/mpc-process.png)
+For more information, please refer to the report and [slides](/docs/slides.pdf).
 
 ## Quick setup
 
