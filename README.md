@@ -1,15 +1,11 @@
 # MPC Community
 
-[![Go test](https://github.com/dedis/cs438/actions/workflows/go_test.yml/badge.svg)](https://github.com/dedis/cs438/actions/workflows/go_test.yml)
-[![Go lint](https://github.com/dedis/cs438/actions/workflows/go_lint.yml/badge.svg)](https://github.com/dedis/cs438/actions/workflows/go_lint.yml)
+A p2p community with access control, where participants can start MPCs, sell data for MPC to use without worried about leackage, participate in MPC to earn fees, etc.
 
-Project for the "Distributed System Engineering" course.
+## System Architecture
 
-Provided by the DEDIS lab at EPFL.
-
-## How to Start
-
-### Quick setup
+## Quick setup
+>>>>>>> Stashed changes
 
 Install go >= 1.19.
 
